@@ -1,11 +1,8 @@
-
-# Reskin
-
+<p align="center">
+  <img src="https://raw.githubusercontent.com/iamnotmega/reskin/main/public/assets/splash.svg" alt="Splash" width="600"/>
+</p>
 
 Reskin is a modern Linux desktop theming app for browsing, applying, and managing custom themes. It supports portable `.reskin` theme packages and provides a simple GUI for theme management across different desktop environments.
-
-## Installation
-
 
 ## Installation
 
