@@ -34,7 +34,7 @@ Reskin is a modern Linux desktop theming app for browsing, applying, and managin
    ./reskin
    ```
 ### Manual installation
-> **⚠️** Before compiling from source, please make sure your computer has `cargo` installed.
+> **⚠️** Before compiling from source, please make sure your computer has `cargo` and `npm` installed.
 
 1. Clone the repository:
    ```bash
@@ -48,17 +48,25 @@ Reskin is a modern Linux desktop theming app for browsing, applying, and managin
    ```bash
    cd src-tauri
    ```
-4. Compile the release binary with `cargo`:
+5. Install the Node modules:
+   ```bash
+   npm install
+   ```
+6. Build the app for production:
+   ```bash
+   npm build
+   ```
+7. Compile the release binary with `cargo`:
     ```bash
     cargo build --release
     ```
-5. Change to the directory with the built binary:
+8. Change to the directory with the built binary:
    ```bash
    cd target/release
    ```
-6. Run the app:
+9. Run the app:
    ```bash
    ./reskin
    ```
 
-Alternatively, you can also run `cargo run` within the `src-tauri` directory to run the Reskin app.
+Alternatively, you can also run `cargo run` within the `src-tauri` directory to run the Reskin app directly.
