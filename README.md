@@ -56,6 +56,9 @@ Reskin is a modern Linux desktop theming app for browsing, applying, and managin
    ```bash
    cd target/release
    ```
-6. You have now built Reskin from source!
+6. Run the app:
+   ```bash
+   ./reskin
+   ```
 
-Alternatively, you can also run `cargo run` within the `src-tauri` directory to run the Reskin app without creating a binary.
+Alternatively, you can also run `cargo run` within the `src-tauri` directory to run the Reskin app.
