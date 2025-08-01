@@ -54,7 +54,7 @@ Reskin is a modern Linux desktop theming app for browsing, applying, and managin
    ```
 6. Build the app for production:
    ```bash
-   npm build
+   npm run build
    ```
 7. Compile the release binary with `cargo`:
     ```bash
