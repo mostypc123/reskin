@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Reskin Bundler</title>
+	<style>
+		body {
+			font-family: sans-serif;
+			max-width: 600px;
+			margin: auto;
+			padding: 2rem;
+			background: #1e1e2e;
+			color: #f5f5f5;
+		}
+		input, button, label {
+			display: block;
+			width: 100%;
+			margin-bottom: 1rem;
+			padding: 0.6rem;
+			font-size: 1rem;
+			border: none;
+			border-radius: 6px;
+		}
+		input[type="file"] {
+			background: #2e2e3e;
+			color: #ddd;
+		}
+		button {
+			background: #89b4fa;
+			color: #000;
+			cursor: pointer;
+			font-weight: bold;
+		}
+		button:disabled {
+			background: #555;
+			cursor: not-allowed;
+		}
+		.status {
+			margin-top: 1rem;
+			padding: 0.5rem;
+			border-radius: 4px;
+			background: #2e2e3e;
+		}
+	</style>
+</head>
+<body>
+	<h1>📦 Reskin Bundler</h1>
+
+	<label for="packageName">🎁 Package Name*</label>
+	<input type="text" id="packageName" placeholder="eg. cyber-night-dark" />
+
+	<label for="author">🧑 Author*</label>
+	<input type="text" id="author" placeholder="eg. Anurag Bansal" />
+
+	<label for="previewImage">🎁 Theme Preview*</label>
+	<input type="file" id="previewImage" accept="image/*" />
+
+	<label for="description">✍️ Description</label>
+	<input type="text" id="description" value="Created with Reskin" />
+
+	<label for="fontFile">🔤 Select Font (optional)</label>
+	<input type="file" id="fontFile" accept=".ttf,.otf" />
+
+	<label for="gtkFolder">🎨 Select GTK Theme Folder</label>
+	<input type="file" id="gtkFolder" webkitdirectory directory />
+
+	<label for="iconsFolder">🖼 Select Icons Folder</label>
+	<input type="file" id="iconsFolder" webkitdirectory directory />
+
+	<label for="cursorFolder">🖱 Select Cursor Folder</label>
+	<input type="file" id="cursorFolder" webkitdirectory directory />
+
+	<label for="shellFolder">💻 Select GNOME Shell Folder</label>
+	<input type="file" id="shellFolder" webkitdirectory directory />
+
+	<label for="kvantumFolder">🧬 Select Kvantum Folder</label>
+	<input type="file" id="kvantumFolder" webkitdirectory directory />
+
+	<button id="bundleBtn" disabled>📦 Bundle .reskin</button>
+	
+	<div id="status" class="status" style="display: none;"></div>
+
+	<script>
+		// Show status message
+		function showStatus(message, type = 'info') {
+			const status = document.getElementById('status');
+			status.textContent = message;
+			status.style.display = 'block';
+			status.style.color = type === 'error' ? '#ff5555' : 
+								 type === 'success' ? '#50fa7b' : 
+								 '#f8f8f2';
+		}
+
+		// Start waiting for Tauri on page load
+		showStatus('Loading Tauri API...', 'info');
+		
+		let waitAttempts = 0;
+		function checkTauri() {
+			waitAttempts++;
+			
+			// Stop after 50 attempts (5 seconds)
+			if (waitAttempts > 50) {
+				showStatus('⚠️ Tauri API not found. Please ensure you\'re running this in the Tauri app.', 'error');
+				return;
+			}
+			
+			// Check for Tauri API
+			console.log('Checking for Tauri API...', window.__TAURI__);
+			
+			if (window.__TAURI__ && window.__TAURI__.core && window.__TAURI__.core.invoke) {
+				console.log('Tauri API loaded successfully');
+				document.getElementById('bundleBtn').disabled = false;
+				showStatus('Tauri API ready - you can now bundle themes!', 'success');
+				return;
+			}
+			
+			// Check if we're running in a browser (not Tauri)
+			if (typeof window !== 'undefined' && !window.__TAURI__) {
+				console.log('Not running in Tauri environment');
+				showStatus('⚠️ Not running in Tauri app. Please open this in the Reskin desktop app.', 'error');
+				return;
+			}
+			
+			setTimeout(checkTauri, 100);
+		}
+		
+		checkTauri();
+
+		document.getElementById('bundleBtn').addEventListener('click', async () => {
+			const gtkFolder = document.getElementById('gtkFolder');
+			const shellFolder = document.getElementById('shellFolder');
+			const kvantumFolder = document.getElementById('kvantumFolder');
+			const cursorFolder = document.getElementById('cursorFolder');
+			const iconsFolder = document.getElementById('iconsFolder');
+			const fontFile = document.getElementById('fontFile');
+
+			// Collect all files from all selected directories
+			const allFiles = [];
+			const folders = [gtkFolder, shellFolder, kvantumFolder, cursorFolder, iconsFolder];
+			
+			for (const folder of folders) {
+				if (folder.files.length > 0) {
+					for (const file of folder.files) {
+						allFiles.push(file);
+					}
+				}
+			}
+
+			// Add font file if selected
+			if (fontFile.files.length > 0) {
+				allFiles.push(fontFile.files[0]);
+			}
+
+			const supports = [];
+			if (gtkFolder.files.length > 0) supports.push("gnome", "xfce", "plasma");
+			if (shellFolder.files.length > 0) supports.push("gnome");
+			if (kvantumFolder.files.length > 0) supports.push("plasma");
+			if (cursorFolder.files.length > 0) supports.push("all");
+			if (iconsFolder.files.length > 0) supports.push("all");
+			if (supports.length === 0 && fontFile.files.length > 0) supports.push("all");
+
+			const author = document.getElementById('author').value;
+			const description = document.getElementById('description').value;
+			const id = document.getElementById('packageName').value;
+			const previewImage = document.getElementById('previewImage').files[0];
+
+			if (!id || !author) {
+				showStatus('Please fill in Package Name and Author!', 'error');
+				return;
+			}
+
+			if (allFiles.length === 0) {
+				showStatus('Please select at least one theme folder!', 'error');
+				return;
+			}
+
+			const manifest = {
+				name: id,
+				author,
+				description,
+				version: "1.0",
+				preview: previewImage ? previewImage.name : "preview.png",
+				supports
+			};
+
+			try {
+				// Read all files and prepare file data
+				const fileReads = [];
+				for (const file of allFiles) {
+					fileReads.push(
+						new Promise((resolve, reject) => {
+							const reader = new FileReader();
+							reader.onload = () => {
+								const arrayBuffer = reader.result;
+								const uint8Array = new Uint8Array(arrayBuffer);
+								resolve({
+									path: file.webkitRelativePath || file.name,
+									data: Array.from(uint8Array)
+								});
+							};
+							reader.onerror = reject;
+							reader.readAsArrayBuffer(file);
+						})
+					);
+				}
+
+				console.log('Reading files...');
+				showStatus('Reading theme files...', 'info');
+				const fileData = await Promise.all(fileReads);
+				
+				const outputPath = `/tmp/reskin/${id}.reskin`;
+
+				console.log('Calling bundle_theme with', fileData.length, 'files');
+				showStatus('Bundling theme files...', 'info');
+				
+				// Get invoke function from Tauri API
+				const invoke = window.__TAURI__.core.invoke;
+				
+				const result = await invoke('bundle_theme', {
+					request: {
+						manifest,
+						output_path: outputPath,
+						assets: fileData.map(f => f.path),
+						file_data: fileData,
+						base_directory: null
+					}
+				});
+
+				console.log('Bundle result:', result);
+				showStatus(`Theme bundled successfully! Saved to: ${outputPath}`, 'success');
+			} catch (error) {
+				console.error('Bundle error:', error);
+				showStatus(`Bundling failed: ${error.message || error}`, 'error');
+			}
+		});
+	</script>
+</body>
+</html>
