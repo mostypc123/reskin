@@ -580,14 +580,9 @@ export default function ThemeBundler() {
               value={themeData.license}
               onChange={handleInputChange}
               required
+              className={`settings-dropdown settings-dropdown-${localStorage.getItem("reskin_theme") || "dark"}`}
               style={{
-                flex: "1 1 120px",
-                padding: "8px",
-                borderRadius: "4px",
-                border: "none",
-                background: "#fff",
-                color: "#000",
-                fontSize: "1rem"
+                flex: "1 1 120px"
               }}
             >
               <option value="">Select License</option>

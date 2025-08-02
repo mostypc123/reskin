@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from "react";
+import { invoke } from '@tauri-apps/api/core';
+
+
 import "./Settings.css";
 
 export default function Settings() {
@@ -8,24 +11,28 @@ export default function Settings() {
     const [appVersion, setAppVersion] = useState("");
     const [saveStatus, setSaveStatus] = useState("");
 
+    // For smooth UI reload effect on theme change
+    const [fade, setFade] = useState(false);
+
     useEffect(() => {
         // Apply theme class to body
         document.body.classList.remove("reskin-dark", "reskin-light");
         document.body.classList.add(`reskin-${theme}`);
-        // Tauri API to get app version from backend
+        // Use Tauri's invoke API directly
         const getVersion = async () => {
             try {
-                if (window.__TAURI__ && window.__TAURI__.invoke) {
-                    const ver = await window.__TAURI__.invoke("get_app_version");
-                    setAppVersion(ver || "Unknown");
-                } else {
-                    setAppVersion("Unknown");
-                }
-            } catch {
-                setAppVersion("Unknown");
+                const ver = await invoke("get_app_version");
+                setAppVersion(ver || "Unknown");
+            } catch (err) {
+                console.error("Failed to get app version:", err);
+                setAppVersion(`Unknown (${err?.toString() || 'error'})`);
             }
         };
         getVersion();
+        // Fade out/in for theme change
+        setFade(true);
+        const timer = setTimeout(() => setFade(false), 250);
+        return () => clearTimeout(timer);
     }, []);
 
     // Persist theme selection
@@ -35,16 +42,17 @@ export default function Settings() {
         document.body.classList.add(`reskin-${theme}`);
     }, [theme]);
 
-    const handleSave = () => {
-        // Save theme and install location
+    // Save theme and install location immediately on change
+    useEffect(() => {
         localStorage.setItem("reskin_theme", theme);
+    }, [theme]);
+
+    useEffect(() => {
         localStorage.setItem("reskin_install_location", installLocation);
-        setSaveStatus("Settings saved!");
-        setTimeout(() => setSaveStatus(""), 2500);
-    };
+    }, [installLocation]);
 
     return (
-        <div className="settings-container">
+        <div className={`settings-container${fade ? ' settings-fade' : ''}`}> 
             <h2>Settings</h2>
             <div className="settings-section">
                 <h3>General</h3>
@@ -54,6 +62,7 @@ export default function Settings() {
                         id="theme"
                         value={theme}
                         onChange={e => setTheme(e.target.value)}
+                        className={`settings-dropdown settings-dropdown-${theme}`}
                     >
                         <option value="dark">Dark</option>
                         <option value="light">Light</option>
@@ -69,6 +78,7 @@ export default function Settings() {
                     />
                 </div>
             </div>
+
             <div className="settings-section">
                 <h3>About</h3>
                 <div className="settings-row">
@@ -76,17 +86,10 @@ export default function Settings() {
                     <span>{appVersion || "Unknown"}</span>
                 </div>
             </div>
-            <button
-                style={{ marginTop: 18, padding: "8px 24px", background: "#5f0d66", color: "#fff", border: "none", borderRadius: "6px", fontWeight: "bold", cursor: "pointer" }}
-                onClick={handleSave}
-            >
-                Save
-            </button>
-            {saveStatus && (
-                <div style={{ marginTop: 10, color: "#50fa7b", fontWeight: "bold", background: "#222", padding: "6px 16px", borderRadius: "6px" }}>
-                    {saveStatus}
-                </div>
-            )}
+            <div style={{textAlign: 'center', marginTop: '32px', fontSize: '1.05em', color: '#888'}}>
+                Made with <span style={{color: '#e25555'}}>❤️</span> by NotMega
+            </div>
+
         </div>
     );
 }

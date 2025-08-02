@@ -18,6 +18,12 @@ body.reskin-auto {
     color: #fff;
     border-radius: 12px;
     box-shadow: 0 2px 16px rgba(0,0,0,0.2);
+    transition: background 0.2s, color 0.2s, opacity 0.25s;
+}
+
+.settings-fade {
+    opacity: 0.3;
+    pointer-events: none;
 }
 .settings-section {
     margin-bottom: 32px;
@@ -35,11 +41,52 @@ body.reskin-auto {
     flex: 1;
     padding: 8px;
     border-radius: 4px;
-    border: none;
-    background: #333;
-    color: #fff;
+    border: 1px solid #bbb;
+    background: inherit;
+    color: inherit;
+    transition: background 0.2s, color 0.2s, border 0.2s;
 }
 .settings-row span {
     margin-left: 8px;
     font-size: 1.1em;
+}
+
+/* Theme-aware dropdown styles */
+.settings-dropdown-dark {
+    background: #222 !important;
+    color: #fff !important;
+    border: 1px solid #444 !important;
+    transition: background 0.2s, color 0.2s;
+    box-shadow: none !important;
+    appearance: none !important;
+    outline: none !important;
+    font-family: inherit !important;
+    font-size: inherit !important;
+    font-weight: inherit !important;
+}
+.settings-dropdown-light {
+    background: #fff !important;
+    color: #222 !important;
+    border: 1px solid #bbb !important;
+    transition: background 0.2s, color 0.2s;
+    box-shadow: none !important;
+    appearance: none !important;
+    outline: none !important;
+    font-family: inherit !important;
+    font-size: inherit !important;
+    font-weight: inherit !important;
+}
+
+/* Tag bubble style for options */
+.settings-tag {
+    display: inline-block;
+    padding: 4px 10px;
+    margin: 2px 4px;
+    border-radius: 12px;
+    background: #eee;
+    color: #222;
+    border: 1px solid #bbb;
+    font-size: 0.95em;
+    font-weight: 500;
+    transition: background 0.2s, color 0.2s, border 0.2s;
 }

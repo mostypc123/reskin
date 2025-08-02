@@ -1,14 +1,6 @@
 #[tauri::command]
 pub fn get_app_version() -> Result<String, String> {
-    let cargo_toml_path = "src-tauri/Cargo.toml";
-    let content = std::fs::read_to_string(cargo_toml_path).map_err(|e| format!("Failed to read Cargo.toml: {}", e))?;
-    for line in content.lines() {
-        if line.trim().starts_with("version = ") {
-            let version = line.split('=').nth(1).unwrap().trim().trim_matches('"');
-            return Ok(version.to_string());
-        }
-    }
-    Err("Version not found in Cargo.toml".to_string())
+    Ok(env!("CARGO_PKG_VERSION").to_string())
 }
 use tauri::AppHandle;
 use std::process::Command;

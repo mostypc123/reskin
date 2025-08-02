@@ -1,5 +1,5 @@
 {
-	"version": "1.1.0",
+	"version": "1.1.1",
 	"productName": "Reskin",
 	"identifier": "com.reskin.reskinapp",
 	"build": {
@@ -11,7 +11,7 @@
 		"windows": [
 			{
 				"label": "main",
-			"visible": true,
+				"visible": true,
 				"minWidth": 400,
 				"minHeight": 300,
 				"maximized": true,

@@ -160,6 +160,35 @@ h1 {
   color: #b0b0b0;
 }
 
+/* Fade effect for theme change (used in Settings.jsx) */
+.settings-fade {
+  opacity: 0.5;
+  pointer-events: none;
+  transition: opacity 0.35s cubic-bezier(0.4,0,0.2,1);
+  filter: blur(1px);
+}
+
+/* App-wide input/select border for visibility in light theme */
+input, select {
+  border: 1px solid #bbb !important;
+  border-radius: 4px !important;
+  transition: background 0.2s, color 0.2s, border 0.2s;
+}
+
+/* App-wide tag bubble style */
+.settings-tag, .tag-bubble {
+  display: inline-block;
+  padding: 4px 10px;
+  margin: 2px 4px;
+  border-radius: 12px;
+  background: #eee;
+  color: #222;
+  border: 1px solid #bbb;
+  font-size: 0.95em;
+  font-weight: 500;
+  transition: background 0.2s, color 0.2s, border 0.2s;
+}
+
 /* Force horizontal layout for theme rows */
 .themes-grid {
   display: flex;
