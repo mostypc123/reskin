@@ -83,3 +83,7 @@ Alternatively, you can also run `cargo run` within the `src-tauri` directory to 
    ```bash
    yay -S reskin
    ```
+   or:
+   ```bash
+   paru -S reskin
+   ```
