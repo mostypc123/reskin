@@ -74,7 +74,7 @@ Optionally, install the app system-wide by running `sudo cp reskin /usr/bin/resk
    ```
 Optionally, install the app system-wide by running `sudo cp reskin /usr/bin/reskin`.
 
-Alternatively, you can also run `cargo run` within the `src-tauri` directory to run the Reskin app directly.
+Alternatively, you can also run `cargo run --release` within the `src-tauri` directory to run the Reskin app directly.
 
 ### AUR (Arch User Repository)
 > **⚠️** This method of installation ONLY works on Arch-based distributions and will require you to have an AUR helper (such as `yay` or `paru`) installed.
