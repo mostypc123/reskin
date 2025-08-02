@@ -15,7 +15,6 @@ document.addEventListener("contextmenu", event => event.preventDefault());
 
 ReactDOM.createRoot(document.getElementById("root")).render(
 	<React.StrictMode>
-		<SideNav />
 		<App />
 	</React.StrictMode>,
 );

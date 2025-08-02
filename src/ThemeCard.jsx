@@ -28,6 +28,7 @@ export default function ThemeCard({ theme, onClick }) {
         src={theme.preview}
         alt={theme.name || "Theme preview"}
         onError={e => { e.target.onerror = null; e.target.src = "/default-preview.png"; }}
+        style={{ opacity: missing ? 0.5 : 1 }}
       />
       <div className="theme-card-title">{theme.name || "Untitled Theme"}</div>
       <div className="theme-card-author">

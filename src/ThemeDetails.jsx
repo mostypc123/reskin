@@ -29,7 +29,7 @@ export default function ThemeDetails({ theme, onBack }) {
 
 
   if (!manifest) {
-    return <div style={{ color: '#fff', padding: 40 }}>Loading…</div>;
+    return <div style={{ padding: 40 }}>Loading…</div>;
   }
 
   // Handler to apply the theme
@@ -56,37 +56,15 @@ export default function ThemeDetails({ theme, onBack }) {
   }
 
   return (
-    <div style={{
-      background: "#232323",
-      color: "#fff",
-      minHeight: "100vh",
-      padding: "40px",
-      fontFamily: "Inter, sans-serif"
-    }}>
-      <button onClick={onBack} style={{
-        background: "none",
-        border: "none",
-        color: "#fff",
-        fontSize: "2rem",
-        cursor: "pointer",
-        marginBottom: "24px"
-      }}>
-        ←</button>
-      <div style={{
-        display: "flex",
-        gap: "32px",
-        alignItems: "flex-start"
-      }}>
+    <div style={{ minHeight: "100vh", padding: "40px", fontFamily: "Inter, sans-serif" }}>
+      <button onClick={onBack} style={{ background: "none", border: "none", fontSize: "2rem", cursor: "pointer", marginBottom: "24px" }}>
+        ←
+      </button>
+      <div style={{ display: "flex", gap: "32px", alignItems: "flex-start" }}>
         <img
           src={previewSrc}
           alt={manifest.name || 'Theme preview'}
-          style={{
-            width: "350px",
-            height: "200px",
-            borderRadius: "16px",
-            objectFit: "cover",
-            background: "#111"
-          }}
+          style={{ width: "350px", height: "200px", borderRadius: "16px", objectFit: "cover" }}
           onError={e => {
             e.target.onerror = null;
             e.target.src = 'https://cdn.builder.io/api/v1/image/assets/TEMP/9659e8886b77aefaa21fe2f49c72ea8585af01f9?placeholderIfAbsent=true';
@@ -97,25 +75,15 @@ export default function ThemeDetails({ theme, onBack }) {
             <h1 style={{ margin: 0 }}>{manifest.name}</h1>
           )}
           {manifest.author && (
-            <h2 style={{ margin: "8px 0 16px 0", fontWeight: 400, color: "#b0b0b0" }}>
+            <h2 style={{ margin: "8px 0 16px 0", fontWeight: 400 }}>
               by {manifest.author}
             </h2>
           )}
           {manifest.description && (
-            <p style={{ maxWidth: "400px", color: "#ccc" }}>{manifest.description}</p>
+            <p style={{ maxWidth: "400px" }}>{manifest.description}</p>
           )}
           <button
-            style={{
-              marginTop: "18px",
-              padding: "10px 24px",
-              background: "#89b4fa",
-              color: "#232323",
-              border: "none",
-              borderRadius: "8px",
-              fontWeight: "bold",
-              fontSize: "1rem",
-              cursor: "pointer"
-            }}
+            style={{ marginTop: "18px", padding: "10px 24px", border: "none", borderRadius: "8px", fontWeight: "bold", fontSize: "1rem", cursor: "pointer" }}
             onClick={handleApply}
           >
             🎨 Apply Theme

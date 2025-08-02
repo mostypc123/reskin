@@ -6,7 +6,14 @@ export default function ThemeInstaller({ onThemeInstalled, setCurrentView }) {
 	// Async function to run system shell command for theme install
 	const runSystemInstall = async (themeName) => {
 		try {
-			const copyCmd = `mkdir -p ~/.themes/${themeName} && cp -r /tmp/reskin/${themeName}/* ~/.themes/${themeName}/`;
+			// Get install location from localStorage or default
+			let installLocation = localStorage.getItem("reskin_install_location") || "~/.themes";
+			// Expand ~ to home dir if needed
+			if (installLocation.startsWith("~")) {
+				const homeDir = window.__TAURI__ ? await window.__TAURI__.invoke('get_home_dir') : '';
+				installLocation = installLocation.replace("~", homeDir);
+			}
+			const copyCmd = `mkdir -p ${installLocation}/${themeName} && cp -r /tmp/reskin/${themeName}/* ${installLocation}/${themeName}/`;
 			const { invoke } = window.__TAURI__.shell || {};
 			if (invoke) {
 				await invoke('run_shell_command', { command: copyCmd });
@@ -263,14 +270,13 @@ const handleFileInputChange = async (e) => {
 	};
 
 	return (
-		<div style={{
-			fontFamily: 'sans-serif',
-			maxWidth: '600px',
-			margin: 'auto',
-			padding: '2rem',
-			background: '#1e1e2e',
-			color: '#f5f5f5'
-		}}>
+		<div id="theme-installer-root" className={`reskin-${localStorage.getItem("reskin_theme") || "dark"}`}
+			style={{
+				fontFamily: 'sans-serif',
+				maxWidth: '600px',
+				margin: 'auto',
+				padding: '2rem'
+			}}>
 			<h1>🎨 Reskin Installer</h1>
 
 			{/* Drag and Drop Area */}

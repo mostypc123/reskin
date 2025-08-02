@@ -7,6 +7,7 @@ import SideNav from "./SideNav";
 import React, { useEffect, useState, useRef } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import ThemeDetails from "./ThemeDetails";
+import Settings from "./Settings";
 
 export default function App(props) {
   const [currentView, setCurrentView] = useState('home');
@@ -70,39 +71,43 @@ export default function App(props) {
   };
 
   const renderView = () => {
-	switch(currentView) {
-	  case 'bundler':
-		return <ThemeBundler />;
-	  case 'installer':
-		return (
-		  <ThemeInstaller
-			onThemeInstalled={addToRecentlyInstalled}
-			setCurrentView={setCurrentView}
+  switch(currentView) {
+	case 'bundler':
+	  return <ThemeBundler />;
+	case 'installer':
+	  return (
+		<ThemeInstaller
+		  onThemeInstalled={addToRecentlyInstalled}
+		  setCurrentView={setCurrentView}
+		/>
+	  );
+	case 'themeDetails':
+	  return (
+		<ThemeDetails
+		  theme={selectedTheme}
+		  onBack={() => setCurrentView('home')}
+		/>
+	  );
+	case 'settings':
+	  return <Settings />;
+	case 'home':
+	default:
+	  return (
+		<div id="home">
+		  <ThemeRow
+			title="Recently Installed"
+			themes={installedThemes}
+			onThemeClick={handleThemeClick}
 		  />
-		);
-	  case 'themeDetails':
-		return (
-		  <ThemeDetails
-			theme={selectedTheme}
-			onBack={() => setCurrentView('home')}
-		  />
-		);
-	  case 'home':
-	  default:
-		return (
-		  <div id="home">
-			<ThemeRow
-			  title="Recently Installed"
-			  themes={installedThemes}
-			  onThemeClick={handleThemeClick}
-			/>
-		  </div>
-		);
-	}
+		</div>
+	  );
+  }
   };
 
+  // Get theme from localStorage for global class
+  const themeClass = `reskin-${localStorage.getItem("reskin_theme") || "dark"}`;
   return (
-	<div id="main-window">
+	<div id="main-window" className={themeClass}>
 	  <SideNav onNavigate={setCurrentView} />
 	  {renderView()}
 	</div>

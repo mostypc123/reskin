@@ -1,3 +1,19 @@
+.hamburger-btn {
+	transition: box-shadow 0.2s;
+}
+
+.sidenav-overlay {
+	animation: slideInNav 0.25s cubic-bezier(.4,0,.2,1);
+}
+
+.sidenav-menu-btn {
+	transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+
+@keyframes slideInNav {
+	from { transform: translateX(-100%); opacity: 0; }
+	to { transform: translateX(0); opacity: 1; }
+}
 #sidenav {
 	position: fixed;
 	top: 50%;

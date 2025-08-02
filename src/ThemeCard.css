@@ -23,11 +23,12 @@
   height: 140px;
   object-fit: cover;
   border-radius: 15px;
+  color: #fff;
+  color: #b0b0b0;
   flex-shrink: 0;
 }
 
 .theme-card-title {
-  color: #fff;
   font-size: 1.1rem;
   font-weight: 600;
   margin: 8px 0 0 12px;
@@ -37,7 +38,6 @@
 }
 
 .theme-card-author {
-  color: #b0b0b0;
   font-size: 0.95rem;
   margin: 2px 0 0 12px;
   position: absolute;

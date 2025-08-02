@@ -17,25 +17,26 @@
 .theme-row-title {
   font-size: 2rem;
   font-weight: 600;
-  color: #fff;
+   color: #fff;
   margin: 0;
 }
 
 .view-all-btn {
   background: #fff;
-  color: #222;
-  border: none;
-  border-radius: 20px;
-  padding: 6px 18px;
-  font-weight: 500;
-  font-size: 1rem;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  transition: background 0.2s;
+   color: #222;
+   background: #fff;
+   border: none;
+   border-radius: 20px;
+   padding: 6px 18px;
+   font-weight: 500;
+   font-size: 1rem;
+   cursor: pointer;
+   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+   transition: background 0.2s;
 }
 
 .view-all-btn:hover {
-  background: #e0e0e0;
+   background: #e0e0e0;
 }
 
 .theme-row-scroll {

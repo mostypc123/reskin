@@ -485,13 +485,13 @@ export default function ThemeBundler() {
 
   return (
     <div
+      id="theme-bundler-root"
+      className={`reskin-${localStorage.getItem("reskin_theme") || "dark"}`}
       style={{
         fontFamily: "sans-serif",
         maxWidth: "700px",
         margin: "auto",
-        padding: "2rem",
-        background: "#1e1e2e",
-        color: "#f5f5f5",
+        padding: "2rem"
       }}
     >
       <h1>📦 Reskin Bundler</h1>

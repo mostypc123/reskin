@@ -1,0 +1,45 @@
+body.reskin-dark {
+    background: #222 !important;
+    color: #fff !important;
+}
+body.reskin-light {
+    background: #fff !important;
+    color: #222 !important;
+}
+body.reskin-auto {
+    background: #222 !important;
+    color: #fff !important;
+}
+.settings-container {
+    padding: 32px;
+    max-width: 500px;
+    margin: 0 auto;
+    background: #222;
+    color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.2);
+}
+.settings-section {
+    margin-bottom: 32px;
+}
+.settings-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+}
+.settings-row label {
+    min-width: 180px;
+    font-weight: bold;
+}
+.settings-row input, .settings-row select {
+    flex: 1;
+    padding: 8px;
+    border-radius: 4px;
+    border: none;
+    background: #333;
+    color: #fff;
+}
+.settings-row span {
+    margin-left: 8px;
+    font-size: 1.1em;
+}

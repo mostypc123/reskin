@@ -38,6 +38,7 @@ fn main() {
 			commands::bundle_theme_from_directory,
 			commands::extract_theme,
 			commands::install_theme,
+			commands::get_app_version,
 			commands::apply_theme,
 			commands::get_recent_themes,
 			commands::add_recent_theme,
