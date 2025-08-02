@@ -23,6 +23,7 @@ Reskin is a modern Linux desktop theming app for browsing, applying, and managin
 ## Installation
 
 ### Pre-built binary
+> **⚠️** This app depends on `webkit2gtk-4.1`, `xdg-utils`, `cargo`, `desktop-file-utils`, `git`, `nodejs`, `npm` and `rust`.
 
 1. Download the `reskin` binary from the releases page.
 2. Make the binary executable:
