@@ -4,6 +4,8 @@
 
 Reskin is a modern Linux desktop theming app for browsing, applying, and managing custom themes. It supports portable `.reskin` theme packages and provides a simple GUI for theme management across different desktop environments.
 
+> **⚠️** Please note that Reskin currently does not support NixOS.
+
 ## How To Use
 
 ### Bundling themes
