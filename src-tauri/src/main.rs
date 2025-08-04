@@ -1,11 +1,10 @@
+mod install; mod info; mod file; mod extract; mod check; mod bundle; mod apply; mod recent; mod types; mod utils; mod commands;
 use tauri::{ Manager };
 
 fn main() {
 	tauri::Builder::default()
 		.plugin(tauri_plugin_opener::init())
-		.invoke_handler(tauri::generate_handler![
-			mod install; mod info; mod file; mod extract; mod check; mod bundle; mod apply; mod recent; mod types; mod utils;
-		])
+		.invoke_handler(tauri::generate_handler![commands::*])
 		.setup(|_app| {
 			// Code to run only on debug versions
 			#[cfg(debug_assertions)] {
