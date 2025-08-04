@@ -1,3 +1,9 @@
+use std::fs;
+use std::process::Command;
+use crate::types::{ThemeManifest};
+use crate::recent::add_recent_theme;
+use crate::check::{has_gtk_or_wm_components, has_icons, has_cursors, has_fonts};
+
 #[tauri::command]
 pub fn install_theme_from_data(file_data: Vec<u8>, file_name: String) -> Result<String, String> {
     // Create temp directory

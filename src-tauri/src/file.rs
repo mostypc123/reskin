@@ -1,3 +1,4 @@
+use std::process::Command;
 #[tauri::command]
 pub fn select_folder() -> Result<String, String> {
     let output = Command::new("zenity")

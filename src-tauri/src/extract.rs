@@ -1,3 +1,7 @@
+use std::fs;
+use std::fs::File;
+use crate::types::ThemeManifest;
+
 #[tauri::command]
 pub fn extract_theme_info(file_data: Vec<u8>) -> Result<ThemeManifest, String> {
     // Read the RSKN header and extract manifest

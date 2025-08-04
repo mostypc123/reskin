@@ -1,3 +1,5 @@
+use std::process::Command;
+
 #[tauri::command]
 pub fn apply_theme(theme_name: String) -> Result<String, String> {
     let mut results = Vec::new();

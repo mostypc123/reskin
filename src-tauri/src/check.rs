@@ -1,3 +1,4 @@
+use std::fs;
 
 // Check if theme has GTK or window manager components
 fn has_gtk_or_wm_components(theme_path: &std::path::Path) -> bool {
