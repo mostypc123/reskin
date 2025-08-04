@@ -11,7 +11,6 @@ import SideNav from "./SideNav";
 })();
 
 document.addEventListener("contextmenu", event => event.preventDefault());
-// Removed splashscreen logic
 
 ReactDOM.createRoot(document.getElementById("root")).render(
 	<React.StrictMode>

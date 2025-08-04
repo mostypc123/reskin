@@ -1,24 +1,26 @@
+use serde::{Serialize, Deserialize};
+
 #[derive(Serialize, Deserialize, Clone)]
 pub struct ThemeManifest {
-    name: String,
-    author: String,
-    description: String,
-    version: String,
-    preview: String,
+    pub name: String,
+    pub author: String,
+    pub description: String,
+    pub version: String,
+    pub preview: String,
 }
 
-#[derive(Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct BundleRequest {
-    manifest: ThemeManifest,
-    output_path: String,
-    assets: Vec<String>,
-    base_directory: Option<String>, // Directory where theme files are located
+    pub manifest: ThemeManifest,
+    pub output_path: String,
+    pub assets: Vec<String>,
+    pub base_directory: Option<String>, // Directory where theme files are located
 }
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct RecentTheme {
-    name: String,
-    author: String,
-    description: String,
-    installed_at: u64, // Unix timestamp
+    pub name: String,
+    pub author: String,
+    pub description: String,
+    pub installed_at: u64, // Unix timestamp
 }

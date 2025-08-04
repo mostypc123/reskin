@@ -1,4 +1,9 @@
-[tauri::command]
+use std::path::Path;
+use crate::types::{BundleRequest, ThemeManifest};
+use std::fs::{self, File};
+use std::io::Write;
+
+#[tauri::command]
 pub fn bundle_theme(request: BundleRequest) -> Result<String,String> {
     let magic = b"RSKN";
     let manifest_json = serde_json::to_string(&request.manifest)
@@ -51,7 +56,6 @@ pub fn bundle_theme(request: BundleRequest) -> Result<String,String> {
 
 #[tauri::command]
 pub fn bundle_theme_from_directory(manifest: ThemeManifest, theme_directory: String, output_path: String) -> Result<String, String> {
-    use std::path::Path;
     
     // Verify theme directory exists
     if !Path::new(&theme_directory).exists() {

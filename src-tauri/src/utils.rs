@@ -1,5 +1,7 @@
+use std::fs;
+
 // Install icons to appropriate directory
-fn install_icons(staging_dir: &str, theme_name: &str, home_dir: &str) -> Result<(), String> {
+pub fn install_icons(staging_dir: &str, theme_name: &str, home_dir: &str) -> Result<(), String> {
     let icons_dir = format!("{}/.local/share/icons", home_dir);
     let dest_dir = format!("{}/{}", icons_dir, theme_name);
     
@@ -18,7 +20,7 @@ fn install_icons(staging_dir: &str, theme_name: &str, home_dir: &str) -> Result<
 }
 
 // Install cursors to appropriate directory  
-fn install_cursors(staging_dir: &str, theme_name: &str, home_dir: &str) -> Result<(), String> {
+pub fn install_cursors(staging_dir: &str, theme_name: &str, home_dir: &str) -> Result<(), String> {
     let cursors_dir = format!("{}/.local/share/icons", home_dir);
     let dest_dir = format!("{}/{}", cursors_dir, theme_name);
     
@@ -37,7 +39,7 @@ fn install_cursors(staging_dir: &str, theme_name: &str, home_dir: &str) -> Resul
 }
 
 // Install fonts to appropriate directory
-fn install_fonts(staging_dir: &str, theme_name: &str, home_dir: &str) -> Result<(), String> {
+pub fn install_fonts(staging_dir: &str, theme_name: &str, home_dir: &str) -> Result<(), String> {
     let fonts_dir = format!("{}/.local/share/fonts/{}", home_dir, theme_name);
     
     fs::create_dir_all(&fonts_dir)
@@ -59,8 +61,8 @@ fn install_fonts(staging_dir: &str, theme_name: &str, home_dir: &str) -> Result<
     Ok(())
 }
 
-/ Helper function to recursively copy directories
-fn copy_dir_recursive(src: &str, dst: &str) -> Result<(), std::io::Error> {
+/// Helper function to recursively copy directories
+pub fn copy_dir_recursive(src: &str, dst: &str) -> Result<(), std::io::Error> {
     use std::path::Path;
     
     fs::create_dir_all(dst)?;

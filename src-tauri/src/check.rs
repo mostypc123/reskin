@@ -1,7 +1,7 @@
 use std::fs;
 
 // Check if theme has GTK or window manager components
-fn has_gtk_or_wm_components(theme_path: &std::path::Path) -> bool {
+pub fn has_gtk_or_wm_components(theme_path: &std::path::Path) -> bool {
     let gtk_wm_dirs = ["gtk-2.0", "gtk-3.0", "gtk-4.0", "xfwm4", "gnome-shell", 
                        "cinnamon", "metacity-1", "openbox-3", "plank"];
     
@@ -9,7 +9,7 @@ fn has_gtk_or_wm_components(theme_path: &std::path::Path) -> bool {
 }
 
 // Check if theme has icons
-fn has_icons(theme_path: &std::path::Path) -> bool {
+pub fn has_icons(theme_path: &std::path::Path) -> bool {
     // Look for common icon directories or files
     let icon_indicators = ["icons", "scalable", "16x16", "22x22", "24x24", "32x32", 
                           "48x48", "64x64", "128x128", "256x256", "apps", "places", 
@@ -20,13 +20,13 @@ fn has_icons(theme_path: &std::path::Path) -> bool {
 }
 
 // Check if theme has cursors
-fn has_cursors(theme_path: &std::path::Path) -> bool {
+pub fn has_cursors(theme_path: &std::path::Path) -> bool {
     theme_path.join("cursors").exists() ||
     theme_path.join("cursor.theme").exists()
 }
 
 // Check if theme has fonts
-fn has_fonts(theme_path: &std::path::Path) -> bool {
+pub fn has_fonts(theme_path: &std::path::Path) -> bool {
     if let Ok(entries) = fs::read_dir(theme_path) {
         for entry in entries.flatten() {
             if let Some(ext) = entry.path().extension() {

@@ -2,6 +2,7 @@ use std::fs;
 use std::time::SystemTime;
 use crate::types::RecentTheme;
 
+
 #[tauri::command]
 pub fn get_recent_themes() -> Result<Vec<RecentTheme>, String> {
     let home_dir = std::env::var("HOME")

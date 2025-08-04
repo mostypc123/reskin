@@ -1,6 +1,6 @@
 [package]
 name = "reskin"
-version = "1.1.1"
+version = "1.1.2"
 description = "Linux customization done right."
 authors = [
 	"iamnotmega",

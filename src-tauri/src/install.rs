@@ -3,6 +3,8 @@ use std::process::Command;
 use crate::types::{ThemeManifest};
 use crate::recent::add_recent_theme;
 use crate::check::{has_gtk_or_wm_components, has_icons, has_cursors, has_fonts};
+use crate::extract::{extract_theme, extract_theme_info};
+use crate::utils::{install_icons, install_cursors, install_fonts, copy_dir_recursive};
 
 #[tauri::command]
 pub fn install_theme_from_data(file_data: Vec<u8>, file_name: String) -> Result<String, String> {
