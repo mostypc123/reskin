@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
+import "./ThemeBundler.css";
 
 export default function ThemeBundler() {
   const [isReady, setIsReady] = useState(false);
@@ -486,42 +487,20 @@ export default function ThemeBundler() {
   return (
     <div
       id="theme-bundler-root"
-      className={`reskin-${localStorage.getItem("reskin_theme") || "dark"}`}
-      style={{
-        fontFamily: "sans-serif",
-        maxWidth: "700px",
-        margin: "auto",
-        padding: "2rem"
-      }}
+      className={`reskin-${localStorage.getItem("reskin_theme") || "dark"} themebundler-root`}
     >
       <h1>📦 Reskin Bundler</h1>
 
       {/* Theme meta info at the top */}
-      <div style={{
-        display: "flex",
-        flexDirection: "row",
-        gap: "32px",
-        alignItems: "flex-start",
-        marginBottom: "2rem"
-      }}>
-        <div style={{ flex: 1 }}>
+      <div className="themebundler-meta-row">
+        <div className="themebundler-meta-col">
           <input
             name="name"
             placeholder="Theme Name"
             value={themeData.name}
             onChange={handleInputChange}
             required
-            style={{
-              width: "100%",
-              marginBottom: "12px",
-              padding: "12px",
-              borderRadius: "4px",
-              border: "none",
-              background: "#333",
-              color: "#fff",
-              fontSize: "1.3rem",
-              fontWeight: "bold"
-            }}
+            className="themebundler-input themebundler-input-name"
           />
           <input
             name="author"
@@ -529,16 +508,7 @@ export default function ThemeBundler() {
             value={themeData.author}
             onChange={handleInputChange}
             required
-            style={{
-              width: "100%",
-              marginBottom: "12px",
-              padding: "12px",
-              borderRadius: "4px",
-              border: "none",
-              background: "#333",
-              color: "#fff",
-              fontSize: "1rem"
-            }}
+            className="themebundler-input"
           />
           <textarea
             name="description"
@@ -546,44 +516,23 @@ export default function ThemeBundler() {
             value={themeData.description}
             onChange={handleInputChange}
             required
-            style={{
-              width: "100%",
-              marginBottom: "12px",
-              padding: "12px",
-              borderRadius: "4px",
-              border: "none",
-              background: "#333",
-              color: "#fff",
-              fontSize: "1rem",
-              minHeight: "60px"
-            }}
+            className="themebundler-textarea"
           />
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "12px", marginBottom: "12px" }}>
+          <div className="themebundler-meta-flex">
             <input
               name="version"
               placeholder="Version"
               value={themeData.version}
               onChange={handleInputChange}
               required
-              style={{
-                flex: "1 1 120px",
-                padding: "8px",
-                borderRadius: "4px",
-                border: "none",
-                background: "#333",
-                color: "#fff",
-                fontSize: "1rem"
-              }}
+              className="themebundler-input themebundler-input-version"
             />
             <select
               name="license"
               value={themeData.license}
               onChange={handleInputChange}
               required
-              className={`settings-dropdown settings-dropdown-${localStorage.getItem("reskin_theme") || "dark"}`}
-              style={{
-                flex: "1 1 120px"
-              }}
+              className={`settings-dropdown settings-dropdown-${localStorage.getItem("reskin_theme") || "dark"} themebundler-select`}
             >
               <option value="">Select License</option>
               <option value="MIT">MIT</option>
@@ -593,18 +542,18 @@ export default function ThemeBundler() {
               <option value="Unlicense">Unlicense</option>
             </select>
             {/* TAGS CHIP INPUT */}
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", background: "#333", borderRadius: "4px", padding: "8px", minWidth: "120px" }}>
+            <div className="themebundler-tags-flex">
               {tags.map(tag => (
-                <span key={tag} style={{ background: "#444", borderRadius: "12px", padding: "4px 10px", color: "#fff", display: "flex", alignItems: "center" }}>
+              <span key={tag} className="themebundler-tag-chip">
                   {tag}
-                  <button type="button" onClick={() => removeTag(tag)} style={{ marginLeft: 6, background: "none", border: "none", color: "#fff", cursor: "pointer" }}>×</button>
+                <button type="button" onClick={() => removeTag(tag)} className="themebundler-tag-remove">×</button>
                 </span>
               ))}
               <input
                 type="text"
                 placeholder="Add tag, then comma"
                 onChange={handleTagsChange}
-                style={{ background: "transparent", border: "none", color: "#fff", outline: "none", minWidth: 80 }}
+                className="themebundler-tag-input"
               />
             </div>
             {/* Preview image file input */}
@@ -612,7 +561,7 @@ export default function ThemeBundler() {
               type="file"
               accept="image/*"
               onChange={e => setThemeData(prev => ({ ...prev, preview: e.target.files[0] }))}
-              style={{ flex: "2 1 180px", padding: "8px", borderRadius: "4px", border: "none", background: "#333", color: "#fff", fontSize: "1rem" }}
+              className="themebundler-input themebundler-input-preview"
             />
           </div>
         </div>
@@ -624,38 +573,19 @@ export default function ThemeBundler() {
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         onClick={handleFolderSelect}
-        style={{
-          border: `2px dashed ${dragOver ? "#89b4fa" : "#555"}`,
-          borderRadius: "8px",
-          padding: "3rem",
-          textAlign: "center",
-          background: dragOver ? "#2a2a3e" : "#2e2e3e",
-          marginBottom: "1rem",
-          cursor: "pointer",
-          transition: "all 0.3s ease",
-        }}
+        className={`themebundler-dropzone${dragOver ? " themebundler-dropzone-active" : ""}`}
       >
         {selectedFolder ? (
           <div>
             <p>📁 Selected: {selectedFolder.name}</p>
-            <p
-              style={{
-                fontSize: "0.9rem",
-                color: "#aaa",
-              }}
-            >
+            <p className="themebundler-dropzone-desc">
               Drop another folder to replace or click to browse
             </p>
           </div>
         ) : (
           <div>
             <p>📁 Drag & Drop Theme Folder Here</p>
-            <p
-              style={{
-                fontSize: "0.9rem",
-                color: "#aaa",
-              }}
-            >
+            <p className="themebundler-dropzone-desc">
               Or click to browse
             </p>
           </div>
@@ -675,30 +605,14 @@ export default function ThemeBundler() {
       <button
         onClick={handleBundle}
         disabled={!isReady || !selectedFolder}
-        style={{
-          display: "block",
-          width: "100%",
-          padding: "0.6rem",
-          fontSize: "1rem",
-          border: "none",
-          borderRadius: "6px",
-          background: isReady && selectedFolder ? "#89b4fa" : "#555",
-          color: "#000",
-          cursor: isReady && selectedFolder ? "pointer" : "not-allowed",
-          fontWeight: "bold",
-        }}
+        className={`themebundler-bundle-btn${isReady && selectedFolder ? "" : " themebundler-bundle-btn-disabled"}`}
       >
         📦 Bundle .reskin
       </button>
 
       <div
-        style={{
-          marginTop: "1rem",
-          padding: "0.5rem",
-          borderRadius: "4px",
-          background: "#2e2e3e",
-          color: getStatusColor(),
-        }}
+        className="themebundler-status"
+        style={{ color: getStatusColor() }}
       >
         {status}
       </div>

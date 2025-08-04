@@ -18,21 +18,3 @@ ReactDOM.createRoot(document.getElementById("root")).render(
 		<App />
 	</React.StrictMode>,
 );
-
-// (async () => {
-// 	await invoke("init").then((a) => {
-// 		console.log("Tauri initialized", a);
-// 	});
-// })();
-
-// (async () => {
-// 	useEffect(() => {
-// 		const unlisten = listen("welcome", (event) => {
-// 			console.log("Received event:", event.payload);
-// 			console.log(event);
-// 		});
-// 		return () => {
-// 			unlisten.then(f => f());
-// 		};
-// 	}, []);
-// })();

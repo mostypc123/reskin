@@ -50,10 +50,7 @@ export default function ThemeDetails({ theme, onBack }) {
   };
 
   // Defensive preview image handling
-  let previewSrc = manifest.preview;
-  if (!previewSrc || typeof previewSrc !== 'string' || previewSrc.trim() === '') {
-    previewSrc = 'https://cdn.builder.io/api/v1/image/assets/TEMP/9659e8886b77aefaa21fe2f49c72ea8585af01f9?placeholderIfAbsent=true';
-  }
+let previewSrc = manifest.preview;
 
   return (
     <div style={{ minHeight: "100vh", padding: "40px", fontFamily: "Inter, sans-serif" }}>
