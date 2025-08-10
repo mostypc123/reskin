@@ -46,31 +46,27 @@ Optionally, install the app system-wide by running `sudo cp reskin /usr/bin/resk
    ```bash
    git clone https://github.com/iamnotmega/reskin.git
    ```
-2. Change to the cloned repository:
+2. Change to the cloned repository's `src-tauri` folder:
    ```bash
-   cd reskin
+   cd reskin/src-tauri
    ```
-3. Change to the `src-tauri` directory within the cloned repository folder:
-   ```bash
-   cd src-tauri
-   ```
-5. Install the Node modules:
+3. Install the Node modules:
    ```bash
    npm install
    ```
-6. Build the app for production:
+4. Build the app for production:
    ```bash
    npm run build
    ```
-7. Compile the release binary with `cargo`:
+5. Compile the release binary with `cargo`:
     ```bash
     cargo build --release
     ```
-8. Change to the directory with the built binary:
+6. Change to the directory with the built binary:
    ```bash
    cd target/release
    ```
-9. Run the app:
+7. Run the app:
    ```bash
    ./reskin
    ```
