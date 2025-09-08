@@ -3,34 +3,6 @@ import { invoke } from "@tauri-apps/api/core";
 import "./ThemeInstaller.css";
 
 export default function ThemeInstaller({ onThemeInstalled, setCurrentView }) {
-  // Async function to run system shell command for theme install
-  const runSystemInstall = async (themeName) => {
-    try {
-      // Get install location from localStorage or default
-      let installLocation =
-        localStorage.getItem("reskin_install_location") || "~/.themes";
-      // Expand ~ to home dir if needed
-      if (installLocation.startsWith("~")) {
-        const homeDir = window.__TAURI__
-          ? await window.__TAURI__.invoke("get_home_dir")
-          : "";
-        installLocation = installLocation.replace("~", homeDir);
-      }
-      const copyCmd = `mkdir -p ${installLocation}/${themeName} && cp -r /tmp/reskin/${themeName}/* ${installLocation}/${themeName}/`;
-      const { invoke } = window.__TAURI__.shell || {};
-      if (invoke) {
-        await invoke("run_shell_command", { command: copyCmd });
-      } else {
-        // Fallback: run via JS API if available
-        await window.__TAURI__.invoke("run_shell_command", {
-          command: copyCmd,
-        });
-      }
-      showStatus("Theme installed using system command!", "success");
-    } catch (err) {
-      showStatus(`System install failed: ${err.message || err}`, "error");
-    }
-  };
   const [isReady, setIsReady] = useState(false);
   const [status, setStatus] = useState("Loading Tauri API...");
   const [statusType, setStatusType] = useState("info");
@@ -156,98 +128,47 @@ export default function ThemeInstaller({ onThemeInstalled, setCurrentView }) {
     }
   };
 
-  const handleInstall = async () => {
-    if (!selectedFile) {
-      showStatus("Please select a .reskin file!", "error");
-      return;
+const handleInstall = async () => {
+  if (!selectedFile) {
+    showStatus("Please select a .reskin file!", "error");
+    return;
+  }
+
+  try {
+    showStatus("Installing theme...", "info");
+
+    let result;
+
+    if (selectedFile.path) {
+      // Install directly from path
+      result = await invoke("install_theme", {
+        themePath: selectedFile.path,
+      });
+    } else if (selectedFile.file) {
+      // Install from file data
+      const arrayBuffer = await selectedFile.file.arrayBuffer();
+      const fileData = Array.from(new Uint8Array(arrayBuffer));
+
+      result = await invoke("install_theme_from_data", {
+        fileData,
+        fileName: selectedFile.name,
+      });
     }
-    try {
-      showStatus("Installing theme...", "info");
-      let themeName = "";
-      if (selectedFile.path) {
-        showStatus("Reading theme info...", "info");
-        const fileThemeInfo = await invoke("extract_theme_info_from_file", {
-          filePath: selectedFile.path,
-        });
-        themeName = fileThemeInfo.name;
-        console.log("Theme info:", fileThemeInfo);
-        showStatus("Extracting theme...", "info");
-        const extractResult = await invoke("extract_theme", {
-          bundlePath: selectedFile.path,
-        });
-        console.log("Extract result:", extractResult);
-        // Always copy extracted folder to ~/.themes/{themeName}
-        const homeDir = await invoke("get_home_dir");
-        const srcDir = `/tmp/reskin/${themeName}`;
-        const destDir = `${homeDir}/.themes/${themeName}`;
-        try {
-          await invoke("create_theme_dir", { path: destDir });
-        } catch (e) {
-          console.error("create_theme_dir failed:", e);
-        }
-        try {
-          await invoke("copy_theme_dir", { src: srcDir, dest: destDir });
-          console.log("Copied theme to .themes:", destDir);
-        } catch (e) {
-          console.error("copy_theme_dir failed:", e);
-          showStatus(
-            "Failed to copy theme to .themes. Check permissions.",
-            "error"
-          );
-        }
-        // Now install theme components
-        const result = await invoke("install_theme", {
-          themeName: themeName,
-        });
-        console.log("Install result:", result);
-        showStatus("Theme installed successfully!", "success");
-        if (onThemeInstalled) {
-          onThemeInstalled(fileThemeInfo);
-        }
-      } else if (selectedFile.file) {
-        const arrayBuffer = await selectedFile.file.arrayBuffer();
-        const uint8Array = new Uint8Array(arrayBuffer);
-        const fileData = Array.from(uint8Array);
-        // install_theme_from_data will extract and install, but we still copy to .themes for manifest
-        const result = await invoke("install_theme_from_data", {
-          fileData: fileData,
-          fileName: selectedFile.name,
-        });
-        console.log("Install result:", result);
-        // Try to get theme name from result (if possible)
-        let themeName = "";
-        if (themeInfo && themeInfo.name) themeName = themeInfo.name;
-        if (themeName) {
-          const homeDir = await invoke("get_home_dir");
-          const srcDir = `/tmp/reskin/${themeName}`;
-          const destDir = `${homeDir}/.themes/${themeName}`;
-          try {
-            await invoke("create_theme_dir", { path: destDir });
-          } catch (e) {
-            console.error("create_theme_dir failed:", e);
-          }
-          try {
-            await invoke("copy_theme_dir", { src: srcDir, dest: destDir });
-            console.log("Copied theme to .themes:", destDir);
-          } catch (e) {
-            console.error("copy_theme_dir failed:", e);
-            showStatus(
-              "Failed to copy theme to .themes. Check permissions.",
-              "error"
-            );
-          }
-        }
-        showStatus("Theme installed successfully!", "success");
-        if (onThemeInstalled) {
-          onThemeInstalled(themeInfo);
-        }
-      }
-    } catch (error) {
-      console.error("Install error:", error);
-      showStatus(`Installation failed: ${error.message || error}`, "error");
+
+    console.log("Install result:", result);
+    showStatus("Theme installed successfully!", "success");
+
+    if (onThemeInstalled && themeInfo) {
+      onThemeInstalled(themeInfo);
     }
-    console.log("Install button clicked");
-  };
+  } catch (error) {
+    console.error("Install error:", error);
+    showStatus(`Installation failed: ${error.message || error}`, "error");
+  }
+
+  console.log("Install button clicked");
+};
+
 
   const handleApply = async () => {
     if (!themeInfo) {
@@ -343,11 +264,12 @@ export default function ThemeInstaller({ onThemeInstalled, setCurrentView }) {
             <p>
               <strong>Version:</strong> {themeInfo.version}
             </p>
-            {themeInfo.supports && (
-              <p>
-                <strong>Supports:</strong> {themeInfo.supports.join(", ")}
-              </p>
-            )}
+            <p>
+              <strong>Tags:</strong> {themeInfo.tags}
+            </p>
+            <p>
+              <strong>License:</strong> {themeInfo.license}
+            </p>
           </div>
         </div>
       )}

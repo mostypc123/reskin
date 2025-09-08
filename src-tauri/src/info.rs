@@ -14,6 +14,11 @@ pub fn init(app: AppHandle) -> Result<serde_json::Value, String> {
         .arg("echo $XDG_CURRENT_DESKTOP")
         .output()
         .map_err(|e| format!("Failed to get desktop environment: {}", e))?;
+    let tmp_dir = Command::new("sh")
+        .arg("-c")
+        .arg("mkdir -p /tmp/reskin")
+        .output()
+        .map_err(|e| format!("Failed to create temporary directory: {}", e))?;
     let de = String::from_utf8_lossy(&de_output.stdout).trim().to_string();
 
     let system_info = json!({

@@ -52,7 +52,6 @@
   padding: 0.5rem;
   border-radius: 4px;
   background: #2e2e3e;
-  /* color is set dynamically in JSX */
 }
 
 #theme-installer-root {

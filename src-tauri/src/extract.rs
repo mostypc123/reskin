@@ -70,15 +70,14 @@ pub fn extract_theme(bundle_path: String) -> Result<String, String> {
     let manifest: ThemeManifest = serde_json::from_slice(&manifest_json)
         .map_err(|e| format!("Failed to parse manifest: {}", e))?;
     
-    // Create base tmp directory first
-    fs::create_dir_all("/tmp/reskin")
-        .map_err(|e| format!("Failed to create /tmp/reskin directory: {}", e))?;
-    
-    let output_dir = format!("/tmp/reskin/{}", manifest.name);
+    let home_dir = std::env::var("HOME").unwrap_or("/home/user".into());
+    let output_dir = format!("/{}/.themes/{}", home_dir, manifest.name);
+
     fs::create_dir_all(&output_dir)
         .map_err(|e| format!("Failed to create output dir: {}", e))?;
-    fs::write(Path::new(&output_dir).join("manifest.json"), &manifest_json)
-        .map_err(|e| format!("Failed to write manifest.json: {}", e))?;
+    
+    fs::write(Path::new(&output_dir).join("reskin.json"), &manifest_json)
+        .map_err(|e| format!("Failed to write reskin.json: {}", e))?;
 
     // Extract assets from the bundle file
     loop {

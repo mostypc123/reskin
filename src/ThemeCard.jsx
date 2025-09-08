@@ -7,7 +7,7 @@ export default function ThemeCard({ theme, onClick }) {
   useEffect(() => {
     // Only check for recently viewed themes in Tauri
     if (window.__TAURI__) {
-      import('@tauri-apps/api').then(({ exists }) => {
+      import('@tauri-apps/api/core').then(({ exists }) => {
         const checkFile = async () => {
           try {
             const filePath = `/tmp/reskin/${theme.name}.reskin`;

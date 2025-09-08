@@ -1,15 +1,3 @@
-body.reskin-dark {
-    background: #222 !important;
-    color: #fff !important;
-}
-body.reskin-light {
-    background: #fff !important;
-    color: #222 !important;
-}
-body.reskin-auto {
-    background: #222 !important;
-    color: #fff !important;
-}
 .settings-container {
     padding: 32px;
     max-width: 500px;
@@ -21,10 +9,6 @@ body.reskin-auto {
     transition: background 0.2s, color 0.2s, opacity 0.25s;
 }
 
-.settings-fade {
-    opacity: 0.3;
-    pointer-events: none;
-}
 .settings-section {
     margin-bottom: 32px;
 }
@@ -49,32 +33,6 @@ body.reskin-auto {
 .settings-row span {
     margin-left: 8px;
     font-size: 1.1em;
-}
-
-/* Theme-aware dropdown styles */
-.settings-dropdown-dark {
-    background: #222 !important;
-    color: #fff !important;
-    border: 1px solid #444 !important;
-    transition: background 0.2s, color 0.2s;
-    box-shadow: none !important;
-    appearance: none !important;
-    outline: none !important;
-    font-family: inherit !important;
-    font-size: inherit !important;
-    font-weight: inherit !important;
-}
-.settings-dropdown-light {
-    background: #fff !important;
-    color: #222 !important;
-    border: 1px solid #bbb !important;
-    transition: background 0.2s, color 0.2s;
-    box-shadow: none !important;
-    appearance: none !important;
-    outline: none !important;
-    font-family: inherit !important;
-    font-size: inherit !important;
-    font-weight: inherit !important;
 }
 
 /* Tag bubble style for options */

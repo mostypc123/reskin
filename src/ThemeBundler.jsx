@@ -19,14 +19,12 @@ export default function ThemeBundler() {
     description: "",
     version: "",
     license: "",
-    compat: "",
+    tags: ""
   });
-  const [file, setFile] = useState(null);
   const [tags, setTags] = useState([]);
-  const [reskinFile, setReskinFile] = useState(null);
+  const storedUser = JSON.parse(localStorage.getItem('reskin_user'));
 
   useEffect(() => {
-    // Check if Tauri API is available
     const checkTauri = () => {
       if (invoke) {
         setIsReady(true);
@@ -44,108 +42,19 @@ export default function ThemeBundler() {
     setStatusType(type);
   };
 
-  // Detect which desktop environments the theme supports based on folder structure
-  const detectSupportedDesktops = (folder) => {
-    if (!folder || !folder.files) return ["all"];
-
-    const hasGTK = fileList.some((file) =>
-      file.webkitRelativePath?.includes("gtk-2.0") ||
-      file.webkitRelativePath?.includes("gtk-3.0") ||
-      file.webkitRelativePath?.includes("gtk-4.0")
-    );
-
-    // Check for specific DE components
-    const hasGnomeShell = fileList.some((file) =>
-      file.webkitRelativePath?.includes("gnome-shell")
-    );
-    const hasXfwm4 = fileList.some((file) =>
-      file.webkitRelativePath?.includes("xfwm4")
-    );
-    const hasCinnamon = fileList.some((file) =>
-      file.webkitRelativePath?.includes("cinnamon")
-    );
-    const hasPlank = fileList.some((file) =>
-      file.webkitRelativePath?.includes("plank")
-    );
-    const hasMetacity = fileList.some((file) =>
-      file.webkitRelativePath?.includes("metacity-1")
-    );
-    const hasOpenbox = fileList.some((file) =>
-      file.webkitRelativePath?.includes("openbox-3")
-    );
-
-    // Check for icons/cursors (universal)
-    const hasIcons = fileList.some((file) =>
-      file.webkitRelativePath?.includes("16x16") ||
-      file.webkitRelativePath?.includes("22x22") ||
-      file.webkitRelativePath?.includes("32x32") ||
-      file.webkitRelativePath?.includes("48x48")
-    );
-
-    const hasCursors = fileList.some((file) =>
-      file.webkitRelativePath?.includes("cursors")
-    );
-
-    // Add supported desktop environments
-    if (hasGTK || hasMetacity) {
-      supported.add("gnome");
-      supported.add("mate");
-      supported.add("unity");
-    }
-
-    if (hasXfwm4 || hasGTK) {
-      supported.add("xfce");
-    }
-
-    if (hasGnomeShell) {
-      supported.add("gnome");
-    }
-
-    if (hasCinnamon) {
-      supported.add("cinnamon");
-    }
-
-    if (hasGTK) {
-      supported.add("plasma"); // KDE can use GTK themes
-    }
-
-    if (hasOpenbox) {
-      supported.add("openbox");
-    }
-
-    if (hasPlank) {
-      supported.add("pantheon"); // Elementary OS uses Plank
-    }
-
-    // Icons and cursors work everywhere
-    if (hasIcons || hasCursors) {
-      supported.add("all");
-    }
-
-    // If we found specific components, return them, otherwise default to "all"
-    return supported.size > 0 ? Array.from(supported) : ["all"];
-  };
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setThemeData((prev) => ({ ...prev, [name]: value }));
-    // Map Theme Name to packageName and Author to author in formData
-    if (name === "name") {
-      setFormData((prev) => ({ ...prev, packageName: value }));
-    } else if (name === "author") {
-      setFormData((prev) => ({ ...prev, author: value }));
-    } else if (name === "description") {
-      setFormData((prev) => ({ ...prev, description: value }));
-    }
+    if (name === "name") setFormData((prev) => ({ ...prev, packageName: value }));
+    else if (name === "author") setFormData((prev) => ({ ...prev, author: value }));
+    else if (name === "description") setFormData((prev) => ({ ...prev, description: value }));
   };
 
   const handleTagsChange = (e) => {
     const value = e.target.value;
     if (value.endsWith(",")) {
       const newTag = value.slice(0, -1).trim();
-      if (newTag && !tags.includes(newTag)) {
-        setTags([...tags, newTag]);
-      }
+      if (newTag && !tags.includes(newTag)) setTags([...tags, newTag]);
       e.target.value = "";
     }
   };
@@ -165,14 +74,13 @@ export default function ThemeBundler() {
   const handleDrop = (e) => {
     e.preventDefault();
     setDragOver(false);
-
     const items = e.dataTransfer.items;
     if (items.length > 0) {
       const item = items[0];
       if (item.kind === "file") {
         const entry = item.webkitGetAsEntry();
         if (entry && entry.isDirectory) {
-          setSelectedFolder(entry);
+          setSelectedFolder({ name: entry.name, entry: entry });
           showStatus(`Selected folder: ${entry.name}`, "success");
         } else {
           showStatus("Please drop a folder, not a file!", "error");
@@ -190,7 +98,6 @@ export default function ThemeBundler() {
     } catch (error) {
       console.error("Error selecting folder:", error);
       showStatus(`Folder selection failed: ${error}`, "error");
-      // Fallback to file input
       document.getElementById("folderInput").click();
     }
   };
@@ -198,7 +105,6 @@ export default function ThemeBundler() {
   const handleFileInputChange = (e) => {
     const files = e.target.files;
     if (files.length > 0) {
-      // Get the folder name from the first file's path
       const folderName = files[0].webkitRelativePath.split("/")[0];
       setSelectedFolder({ name: folderName, files: Array.from(files) });
       showStatus(`Selected folder: ${folderName}`, "success");
@@ -207,30 +113,37 @@ export default function ThemeBundler() {
 
   const readDirectory = (entry) => {
     return new Promise((resolve) => {
-      const files = [];
-
+      const allFiles = [];
       const readEntries = (dirEntry) => {
         const reader = dirEntry.createReader();
         reader.readEntries((entries) => {
-          entries.forEach((entry) => {
-            if (entry.isFile) {
-              entry.file((file) => {
-                files.push({
-                  path: entry.fullPath,
-                  file: file,
+          if (!entries.length) {
+            resolve(allFiles);
+            return;
+          }
+          const promises = entries.map((entry) => {
+            return new Promise((entryResolve) => {
+              if (entry.isFile) {
+                entry.file((file) => {
+                  allFiles.push({
+                    path: entry.fullPath,
+                    file: file,
+                  });
+                  entryResolve();
                 });
-              });
-            } else if (entry.isDirectory) {
-              readEntries(entry);
-            }
+              } else if (entry.isDirectory) {
+                readEntries(entry);
+                entryResolve();
+              } else {
+                entryResolve();
+              }
+            });
           });
+          Promise.all(promises).then(() => readEntries(dirEntry));
         });
       };
-
       if (entry.isDirectory) {
         readEntries(entry);
-        // Give it some time to read all files
-        setTimeout(() => resolve(files), 1000);
       } else {
         resolve([]);
       }
@@ -238,202 +151,60 @@ export default function ThemeBundler() {
   };
 
   const handleBundle = async () => {
-    // Use Node.js or Tauri API for home dir fallback
-    let homeDir = '';
-    try {
-      homeDir = await invoke('get_home_dir');
-    } catch {
-      homeDir = (window.__TAURI__ && window.__TAURI__.path && window.__TAURI__.path.homeDir) ? await window.__TAURI__.path.homeDir() : '/home/' + (window.process?.env?.USER || 'user');
-    }
-
-    // Validate required fields
-    if (!formData.packageName || !formData.author || !formData.description || !themeData.version || !themeData.license || tags.length === 0 || (!themeData.preview || (typeof themeData.preview !== 'string' && !themeData.preview.name))) {
-      showStatus("Please fill in all required fields and add at least one tag!", "error");
+    if (!formData.packageName || (!formData.author && !storedUser.username) || !themeData.version) {
+      showStatus("Please fill in Theme Name, Author, and Version!", "error");
       return;
     }
-
-    // Calculate compat, size, updated
-    let compatA = [];
-    let totalSizeA = 0;
-    let updatedA = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-
-    if (selectedFolder && selectedFolder.files) {
-      compatA = detectSupportedDesktops(selectedFolder.files);
-      totalSizeA = selectedFolder.files.reduce((sum, file) => sum + file.size, 0);
-    } else if (selectedFolder && selectedFolder.path) {
-      compatA = ['all'];
-    }
-
-    const sizeStrA = totalSizeA ? `${(totalSizeA / (1024 * 1024)).toFixed(2)}MB` : "";
-    let previewStr = '';
-    if (typeof themeData.preview === 'string') {
-      previewStr = themeData.preview;
-    } else if (themeData.preview && themeData.preview.name) {
-      previewStr = themeData.preview.name;
-    }
-
-    const manifestA = {
-      name: formData.packageName,
-      author: formData.author,
-      description: formData.description,
-      version: themeData.version,
-      preview: previewStr,
-      license: themeData.license,
-      tags: tags,
-      compat: compatA,
-      size: sizeStrA,
-      updated: updatedA,
-    };
-
-    // Bundle to /tmp first
-    const tmpPath = `/tmp/reskin/${formData.packageName}.reskin`;
-    const tmpExtractedDir = `/tmp/reskin/${formData.packageName}`;
-    const themesDir = `${homeDir}/.themes/${formData.packageName}`;
-    await invoke('create_theme_dir', { path: tmpExtractedDir });
-    await invoke('create_theme_dir', { path: themesDir });
-    // 1. Bundle .reskin in /tmp
-    const resultA = await invoke("bundle_theme_from_directory", {
-      manifest: manifestA,
-      themeDirectory: selectedFolder.path,
-      outputPath: tmpPath,
-    });
-    // 2. Extract .reskin in /tmp (using backend extraction)
-    await invoke('extract_theme', { bundlePath: tmpPath });
-    // 3. Copy extracted folder into ~/.themes
-    await invoke('copy_theme_dir', { src: tmpExtractedDir, dest: themesDir });
-    if (!formData.packageName || !formData.author) {
-      showStatus("Please fill in Package Name and Author!", "error");
-      return;
-    }
-
     if (!selectedFolder) {
       showStatus("Please select or drop a theme folder!", "error");
       return;
     }
-
-    // Calculate compat, size, updated
-    let compat = [];
-    let totalSize = 0;
-    let updated = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-
-    // Detect compat from folder/files
-    if (selectedFolder && selectedFolder.files) {
-      compat = detectSupportedDesktops(selectedFolder.files);
-      totalSize = selectedFolder.files.reduce((sum, file) => sum + file.size, 0);
-    } else if (selectedFolder && selectedFolder.path) {
-      // If using native dialog, fallback to 'all' and skip size
-      compat = ['all'];
-    }
-
-    // Format size in MB
-    const sizeStr = totalSize ? `${(totalSize / (1024 * 1024)).toFixed(2)}MB` : "";
-
-    const manifest = {
-      name: formData.packageName,
-      author: formData.author,
-      description: formData.description,
-      version: themeData.version,
-      preview: typeof themeData.preview === 'string' ? themeData.preview : '',
-      license: themeData.license,
-      tags: tags,
-      compat: compat,
-      size: sizeStr,
-      updated: updated,
-    };
-
+    
     try {
       showStatus("Reading theme files...", "info");
-
-      if (selectedFolder.path) {
-        // Handle folder selected via native dialog
-        showStatus("Bundling theme from selected folder...", "info");
-
-        // Get home dir for .themes path
-        const homeDir = await invoke('get_home_dir');
-        const themeDir = `${homeDir}/.themes/${formData.packageName}`;
-        const tmpPath = `/tmp/reskin/${formData.packageName}.reskin`;
-        const outputPath = `${themeDir}/${formData.packageName}.reskin`;
-        // Ensure .themes/{ThemeName} exists
-        await invoke('create_theme_dir', { path: themeDir });
-        // Bundle to /tmp first
-        const result = await invoke("bundle_theme_from_directory", {
-          manifest: manifest,
-          themeDirectory: selectedFolder.path,
-          outputPath: tmpPath,
-        });
-        // Extract .reskin file into ~/.themes/ThemeName/
-        await invoke('extract_reskin_to_folder', {
-          reskinPath: tmpPath,
-          outputDir: themeDir,
-        });
-
-        console.log("Bundle result:", result);
-        showStatus(
-          `Theme bundled successfully! Saved to: /tmp/reskin/${formData.packageName}.reskin`,
-          "success"
-        );
-        return;
-      }
-
-      // Handle file-based selection (fallback)
+      let totalSize = 0;
       let fileData = [];
 
-      if (selectedFolder.files) {
-        // Handle folder selected via input
-        const fileReads = selectedFolder.files.map((file) =>
-          new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => {
-              const arrayBuffer = reader.result;
-              const uint8Array = new Uint8Array(arrayBuffer);
-              resolve({
-                path: file.webkitRelativePath,
-                data: Array.from(uint8Array),
-              });
-            };
-            reader.onerror = reject;
-            reader.readAsArrayBuffer(file);
-          })
-        );
-        fileData = await Promise.all(fileReads);
-      } else {
-        // Handle folder dropped via drag & drop
-        const files = await readDirectory(selectedFolder);
-        const fileReads = files.map(({ file, path }) =>
-          new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => {
-              const arrayBuffer = reader.result;
-              const uint8Array = new Uint8Array(arrayBuffer);
-              resolve({
-                path: path,
-                data: Array.from(uint8Array),
-              });
-            };
-            reader.onerror = reject;
-            reader.readAsArrayBuffer(file);
-          })
-        );
-        fileData = await Promise.all(fileReads);
+
+    if (!selectedFolder.path) {
+      fileData = selectedFolder.files ? selectedFolder.files : await readDirectory(selectedFolder.entry);
+    }
+
+      
+      const manifest = {
+        name: formData.packageName,
+        author: storedUser?.username || formData.author || "User",
+        description: formData.description,
+        version: themeData.version || "1.0.0",
+        tags: tags.join(","),
+        license: formData.license || "MIT",
+      };
+      
+      let homeDir = '';
+      try {
+        homeDir = await invoke('get_home_dir');
+      } catch {
+        homeDir = (window.__TAURI__ && window.__TAURI__.path && window.__TAURI__.path.homeDir) ? await window.__TAURI__.path.homeDir() : '/home/' + (window.process?.env?.USER || 'user');
+      }
+      
+      const themeDir = `/tmp/reskin`;
+      const outputPath = `${themeDir}/${formData.packageName}.reskin`;
+      
+      showStatus("Bundling theme from selected folder...", "info");
+      
+      const request = {
+          manifest: manifest,
+          theme_directory: selectedFolder.path,
+          assets: fileData.map(f => f.path),
+          output_path: outputPath,
       }
 
-      const homeDir = await invoke('get_home_dir');
-      const themeDir = `${homeDir}/.themes/${formData.packageName}`;
-      const outputPath = `${themeDir}/${formData.packageName}.reskin`;
-      await invoke('create_theme_dir', { path: themeDir });
-
-      console.log("Calling bundle_theme with", fileData.length, "files");
-      showStatus("Bundling theme files...", "info");
-
-      const result = await invoke("bundle_theme", {
-        request: {
-          manifest,
-          output_path: outputPath,
-          assets: fileData.map((f) => f.path),
-          file_data: fileData,
-          base_directory: null,
-        },
-      });
+      let result;
+      if (selectedFolder.path) {
+        result = await invoke("bundle_theme", { request });
+      } else {
+        result = await invoke("bundle_theme_from_directory", { request });
+      }
 
       console.log("Bundle result:", result);
       showStatus(`Theme bundled successfully! Saved to: ${outputPath}`, "success");
@@ -454,44 +225,16 @@ export default function ThemeBundler() {
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Your submit logic here
-  };
-
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const sizeMB = (file.size / (1024 * 1024)).toFixed(2) + "MB";
-      setThemeData(prev => ({ ...prev, size: sizeMB }));
-    }
-  };
-
   const handleReskinFileChange = (e) => {
     setReskinFile(e.target.files[0] || null);
-  };
-
-  const handleTagsSubmit = (e) => {
-    e.preventDefault();
-    // Compose manifest (do NOT set size or updated here)
-    const manifest = {
-      ...themeData,
-      tags,
-      compat: themeData.compat.split(",").map(c => c.trim()).filter(Boolean),
-      // size and updated will be set in Rust after bundling
-    };
-    // TODO: Save manifest and files as needed
-    alert("Manifest to bundle:\n" + JSON.stringify(manifest, null, 2));
   };
 
   return (
     <div
       id="theme-bundler-root"
-      className={`reskin-${localStorage.getItem("reskin_theme") || "dark"} themebundler-root`}
     >
       <h1>📦 Reskin Bundler</h1>
 
-      {/* Theme meta info at the top */}
       <div className="themebundler-meta-row">
         <div className="themebundler-meta-col">
           <input
@@ -505,9 +248,10 @@ export default function ThemeBundler() {
           <input
             name="author"
             placeholder="Author"
-            value={themeData.author}
+            value={storedUser?.username || themeData.author || "User"}
             onChange={handleInputChange}
             required
+            disabled={!!storedUser.username}
             className="themebundler-input"
           />
           <textarea
@@ -520,28 +264,31 @@ export default function ThemeBundler() {
           />
           <div className="themebundler-meta-flex">
             <input
-              name="version"
-              placeholder="Version"
-              value={themeData.version}
-              onChange={handleInputChange}
-              required
-              className="themebundler-input themebundler-input-version"
+            name="version"
+            placeholder="Version"
+            value={themeData.version}
+            onChange={e => {
+              const filtered = e.target.value.replace(/[^0-9.]/g, "");
+              setThemeData(prev => ({ ...prev, version: filtered }));
+            }}
+            required
+            className="themebundler-input themebundler-input-version"
             />
+
             <select
               name="license"
-              value={themeData.license}
+              value={themeData.license || "MIT"}
               onChange={handleInputChange}
               required
-              className={`settings-dropdown settings-dropdown-${localStorage.getItem("reskin_theme") || "dark"} themebundler-select`}
+              className={`settings-dropdown`}
+              style={{ color: "white" }}
             >
               <option value="">Select License</option>
               <option value="MIT">MIT</option>
               <option value="GPL-3.0">GPL-3.0</option>
               <option value="Apache-2.0">Apache-2.0</option>
               <option value="BSD-3-Clause">BSD-3-Clause</option>
-              <option value="Unlicense">Unlicense</option>
             </select>
-            {/* TAGS CHIP INPUT */}
             <div className="themebundler-tags-flex">
               {tags.map(tag => (
               <span key={tag} className="themebundler-tag-chip">
@@ -556,18 +303,10 @@ export default function ThemeBundler() {
                 className="themebundler-tag-input"
               />
             </div>
-            {/* Preview image file input */}
-            <input
-              type="file"
-              accept="image/*"
-              onChange={e => setThemeData(prev => ({ ...prev, preview: e.target.files[0] }))}
-              className="themebundler-input themebundler-input-preview"
-            />
           </div>
         </div>
       </div>
 
-      {/* Drag and Drop Area */}
       <div
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
@@ -592,7 +331,6 @@ export default function ThemeBundler() {
         )}
       </div>
 
-      {/* Hidden file input for folder selection fallback */}
       <input
         type="file"
         webkitdirectory

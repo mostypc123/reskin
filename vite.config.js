@@ -2,6 +2,7 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
 const host = true || process.env.TAURI_DEV_HOST;
+
 export default defineConfig(async () => ({
   plugins: [react()],
   clearScreen: false,
@@ -17,5 +18,8 @@ export default defineConfig(async () => ({
     watch: {
       ignored: ["**/src-tauri/**"],
     },
+  },
+  build: {
+    minify: false,
   },
 }));

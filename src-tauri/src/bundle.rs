@@ -1,9 +1,19 @@
 use std::path::Path;
-use crate::types::{BundleRequest, ThemeManifest};
+use crate::types::{BundleRequest};
 use std::fs::{self, File};
 use std::io::Write;
 
 #[tauri::command]
+#[allow(non_snake_case)]
+pub fn create_theme_dir(path: String) -> Result<String, String> {
+    fs::create_dir_all(&path)
+        .map_err(|e| format!("Failed to create directory: {}", e))?;
+    Ok("Directory created successfully".to_string())
+}
+
+
+#[tauri::command]
+#[allow(non_snake_case)]
 pub fn bundle_theme(request: BundleRequest) -> Result<String,String> {
     let magic = b"RSKN";
     let manifest_json = serde_json::to_string(&request.manifest)
@@ -19,8 +29,7 @@ pub fn bundle_theme(request: BundleRequest) -> Result<String,String> {
 
     // Write assets
     for asset_path in &request.assets {
-        let full_path = if let Some(ref base_dir) = request.base_directory {
-            // If we have a base directory, the asset_path might be relative
+        let full_path = if let Some(ref base_dir) = request.theme_directory {
             if Path::new(asset_path).is_absolute() {
                 asset_path.clone()
             } else {
@@ -55,31 +64,29 @@ pub fn bundle_theme(request: BundleRequest) -> Result<String,String> {
 }
 
 #[tauri::command]
-pub fn bundle_theme_from_directory(manifest: ThemeManifest, theme_directory: String, output_path: String) -> Result<String, String> {
-    
-    // Verify theme directory exists
-    if !Path::new(&theme_directory).exists() {
-        return Err(format!("Theme directory '{}' does not exist", theme_directory));
+#[allow(non_snake_case)]
+    pub fn bundle_theme_from_directory(request: BundleRequest) -> Result<String, String> {
+        
+        let dir = match &request.theme_directory {
+            Some(d) => d,
+            None => return Err("No base directory provided".to_string()),
+        };
+
+        // Verify theme directory exists
+        if !Path::new(dir).exists() {
+            return Err(format!("Theme directory '{}' does not exist", dir));
+        }
+        
+        // Collect all files in the theme directory recursively
+        let mut theme_files = Vec::new();
+        collect_files_recursive(Path::new(dir), &mut theme_files);
+        
+        if theme_files.is_empty() {
+            return Err("No files found in theme directory".to_string());
+        }
+        
+        bundle_theme(request)
     }
-    
-    // Collect all files in the theme directory recursively
-    let mut theme_files = Vec::new();
-    collect_files_recursive(Path::new(&theme_directory), &mut theme_files);
-    
-    if theme_files.is_empty() {
-        return Err("No files found in theme directory".to_string());
-    }
-    
-    // Create bundle request with collected files
-    let request = BundleRequest {
-        manifest,
-        output_path,
-        assets: theme_files,
-        base_directory: Some(theme_directory),
-    };
-    
-    bundle_theme(request)
-}
 
 // Helper function to collect files recursively from a directory
 fn collect_files_recursive(dir: &Path, files: &mut Vec<String>) {

@@ -1,4 +1,3 @@
-import React from "react";
 import "./ThemeRow.css";
 import ThemeCard from "./ThemeCard";
 

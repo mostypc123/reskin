@@ -8,11 +8,14 @@ import React, { useEffect, useState, useRef } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import ThemeDetails from "./ThemeDetails";
 import Settings from "./Settings";
+import UploadTheme from "./UploadTheme";
+import Marketplace from "./Marketplace";
 
 export default function App(props) {
   const [currentView, setCurrentView] = useState('home');
   const [installedThemes, setInstalledThemes] = useState([]);
   const [selectedTheme, setSelectedTheme] = useState(null);
+  const [user, setUser] = useState(null);
 
 
   // Load persistent recently installed themes on app start
@@ -90,6 +93,10 @@ export default function App(props) {
 	  );
 	case 'settings':
 	  return <Settings />;
+	case 'marketplace':
+	  return <Marketplace onThemeClick={handleThemeClick} onNavigate={setCurrentView} />;
+	case 'uploadtheme':
+	  return <UploadTheme />;
 	case 'home':
 	default:
 	  return (
@@ -108,7 +115,7 @@ export default function App(props) {
   const themeClass = `reskin-${localStorage.getItem("reskin_theme") || "dark"}`;
   return (
 	<div id="main-window" className={themeClass}>
-	  <SideNav onNavigate={setCurrentView} />
+	  <SideNav onNavigate={setCurrentView} user={user} setUser={setUser}   />
 	  {renderView()}
 	</div>
   );
