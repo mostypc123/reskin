@@ -28,6 +28,11 @@ jobs:
           cd src-tauri
           npm run build
 
+      - name: Install system dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y pkg-config libglib2.0-dev
+
       - name: Build Rust binary
         run: |
           cd src-tauri
