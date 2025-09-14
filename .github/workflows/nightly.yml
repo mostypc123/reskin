@@ -8,6 +8,8 @@ on:
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout code
@@ -62,6 +64,9 @@ jobs:
           body: "The latest nightly Reskin release."
           draft: false
           prerelease: true
+
+      - name: Upload binary to nightly release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: nightly
           files: dist/reskin
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
