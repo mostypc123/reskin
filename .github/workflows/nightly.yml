@@ -43,7 +43,7 @@ jobs:
             libmount-dev \
             libsepol-dev \
             libjavascriptcoregtk-4.1-dev \
-            libsoup3.0-dev
+            libsoup-3.0-dev
 
       - name: Build Rust binary
         run: |
