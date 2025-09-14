@@ -63,7 +63,7 @@ jobs:
           draft: false
           prerelease: true
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
       - name: Upload binary to nightly release
         uses: softprops/action-gh-release@v1
@@ -71,4 +71,4 @@ jobs:
           tag_name: nightly
           files: dist/reskin
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
