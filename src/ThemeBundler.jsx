@@ -281,7 +281,7 @@ export default function ThemeBundler() {
               onChange={handleInputChange}
               required
               className={`settings-dropdown`}
-              style={{ color: "white" }}
+              style={{ color: "black" }}
             >
               <option value="">Select License</option>
               <option value="MIT">MIT</option>
