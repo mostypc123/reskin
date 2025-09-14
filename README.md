@@ -38,6 +38,7 @@ Reskin is a modern Linux desktop theming app for browsing, applying, and managin
     ```
 
 Optionally, install the app system-wide by running `sudo cp reskin /usr/bin/reskin`.
+The latest development binary are also available in the nightly release.
 
 ### Manual installation
 > **⚠️** Before compiling from source, please make sure your computer has `cargo` and `npm` installed.
@@ -73,6 +74,7 @@ Optionally, install the app system-wide by running `sudo cp reskin /usr/bin/resk
 Optionally, install the app system-wide by running `sudo cp reskin /usr/bin/reskin`.
 
 Alternatively, you can also run `cargo run --release` within the `src-tauri` directory to run the Reskin app directly.
+The latest development build is also available on the `dev` branch.
 
 ### AUR (Arch User Repository)
 > **⚠️** This method of installation ONLY works on Arch-based distributions and will require you to have an AUR helper (such as `yay` or `paru`) installed.
@@ -86,3 +88,4 @@ Alternatively, you can also run `cargo run --release` within the `src-tauri` dir
    ```bash
    paru -S reskin
    ```
+The latest development build is also available in the `reskin-git` package.
