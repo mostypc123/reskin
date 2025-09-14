@@ -62,13 +62,6 @@ jobs:
           body: "The latest nightly Reskin release."
           draft: false
           prerelease: true
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-
-      - name: Upload binary to nightly release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: nightly
           files: dist/reskin
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
