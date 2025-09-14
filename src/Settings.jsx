@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { invoke } from '@tauri-apps/api/core';
-
+import { invoke } from "@tauri-apps/api/core";
 
 import "./Settings.css";
 
 export default function Settings() {
+    const [installLocation, setInstallLocation] = useState(
+        localStorage.getItem("reskin_install_location") || ""
+    );
+    const [appVersion, setAppVersion] = useState("Unknown");
+    const [fade, setFade] = useState(false);
+
     useEffect(() => {
         const getVersion = async () => {
             try {
@@ -12,7 +17,7 @@ export default function Settings() {
                 setAppVersion(ver || "Unknown");
             } catch (err) {
                 console.error("Failed to get app version:", err);
-                setAppVersion(`Unknown (${err?.toString() || 'error'})`);
+                setAppVersion(`Unknown (${err?.toString() || "error"})`);
             }
         };
         getVersion();
@@ -23,7 +28,7 @@ export default function Settings() {
     }, [installLocation]);
 
     return (
-        <div className={`settings-container${fade ? ' settings-fade' : ''}`}> 
+        <div className={`settings-container${fade ? " settings-fade" : ""}`}>
             <h2>Settings</h2>
             <div className="settings-section">
                 <h3>General</h3>
@@ -33,7 +38,7 @@ export default function Settings() {
                         id="installLocation"
                         type="text"
                         value={installLocation}
-                        onChange={e => setInstallLocation(e.target.value)}
+                        onChange={(e) => setInstallLocation(e.target.value)}
                     />
                 </div>
             </div>
@@ -45,10 +50,16 @@ export default function Settings() {
                     <span>{appVersion || "Unknown"}</span>
                 </div>
             </div>
-            <div style={{textAlign: 'center', marginTop: '32px', fontSize: '1.05em', color: '#888'}}>
-                Made with <span style={{color: '#e25555'}}>❤️</span> by NotMega
+            <div
+                style={{
+                    textAlign: "center",
+                    marginTop: "32px",
+                    fontSize: "1.05em",
+                    color: "#888",
+                }}
+            >
+                Made with <span style={{ color: "#e25555" }}>❤️</span> by NotMega
             </div>
-
         </div>
     );
 }
