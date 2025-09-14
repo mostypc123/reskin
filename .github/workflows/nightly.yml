@@ -28,11 +28,6 @@ jobs:
           cd src-tauri
           npm run build
 
-      - name: Set up Rust
-        uses: actions-rs/setup-rust@v1
-        with:
-          rust-version: stable
-
       - name: Build Rust binary
         run: |
           cd src-tauri
