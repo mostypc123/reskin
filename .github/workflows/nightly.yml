@@ -1,0 +1,61 @@
+name: Nightly Build
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Install Node modules
+        run: |
+          cd src-tauri
+          npm install
+
+      - name: Build frontend
+        run: |
+          cd src-tauri
+          npm run build
+
+      - name: Set up Rust
+        uses: actions/setup-rust@v1
+        with:
+          rust-version: stable
+
+      - name: Build Rust binary
+        run: |
+          cd src-tauri
+          cargo build --release
+          mkdir -p dist
+          rm -f dist/reskin
+          cp target/release/reskin ../dist/reskin
+
+      - name: Create or update nightly release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: nightly
+          name: Nightly
+          body: "The latest nightly Reskin release."
+          draft: false
+          prerelease: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload binary to nightly release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: nightly
+          files: dist/reskin
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
