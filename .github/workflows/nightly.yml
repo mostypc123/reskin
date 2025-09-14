@@ -61,7 +61,7 @@ jobs:
         with:
           tag_name: nightly
           name: Nightly
-          body: "The latest nightly Reskin release."
+          body: "The latest automated nightly build. This is an unstable release and may contain bugs."
           draft: false
           prerelease: true
 
