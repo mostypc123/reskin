@@ -3,7 +3,7 @@ import ThemeRow from "./ThemeRow";
 import ThemeBundler from "./ThemeBundler";
 import ThemeInstaller from "./ThemeInstaller";
 import SideNav from "./SideNav";
-// removed duplicate invoke import
+import Titlebar from "./Titlebar";
 import React, { useEffect, useState, useRef } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import ThemeDetails from "./ThemeDetails";
@@ -115,6 +115,7 @@ export default function App(props) {
   const themeClass = `reskin-${localStorage.getItem("reskin_theme") || "dark"}`;
   return (
 	<div id="main-window" className={themeClass}>
+	  <Titlebar />
 	  <SideNav onNavigate={setCurrentView} user={user} setUser={setUser}   />
 	  {renderView()}
 	</div>

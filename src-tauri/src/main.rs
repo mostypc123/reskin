@@ -1,4 +1,4 @@
-	mod info; mod file; mod extract; mod check; mod bundle; mod apply; mod recent; mod types; mod utils; mod install; mod marketplace;
+	mod info; mod file; mod extract; mod check; mod bundle; mod apply; mod recent; mod types; mod utils; mod install; mod marketplace; mod window;
 	use tauri::{ Manager };
 
 	fn main() {
@@ -12,7 +12,8 @@
 				apply::apply_theme,
 				recent::get_recent_themes, recent::add_recent_theme,
 				install::install_theme_from_data, install::install_theme,
-				marketplace::fetch_marketplace_themes, marketplace::get_theme_info, marketplace::download_theme
+				marketplace::fetch_marketplace_themes, marketplace::get_theme_info, marketplace::download_theme,
+				window::minimize, window::toggle_maximize, window::close
 			])
 			.setup(|_app| {
 				// Code to run only on debug versions
