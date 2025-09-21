@@ -1,6 +1,5 @@
 use serde_json::json;
 use std::process::Command;
-use tauri::AppHandle;
 
 #[tauri::command]
 pub fn get_app_version() -> Result<String, String> {
@@ -8,13 +7,13 @@ pub fn get_app_version() -> Result<String, String> {
 }
 
 #[tauri::command]
-pub fn init(app: AppHandle) -> Result<serde_json::Value, String> {
+pub fn init() -> Result<serde_json::Value, String> {
     let de_output = Command::new("sh")
         .arg("-c")
         .arg("echo $XDG_CURRENT_DESKTOP")
         .output()
         .map_err(|e| format!("Failed to get desktop environment: {}", e))?;
-    let tmp_dir = Command::new("sh")
+    Command::new("sh")
         .arg("-c")
         .arg("mkdir -p /tmp/reskin")
         .output()

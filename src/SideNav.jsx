@@ -36,49 +36,49 @@ export default function ({ onNavigate, user, setUser }) {
 	return (
 		<>
 			{!open && (
-				<button
-					className="hamburger-btn"
-					onClick={() => setOpen(true)}
-					aria-label="Open navigation menu"
-					style={{
-						position: "absolute",
-						top: 24,
-						left: 32,
-						zIndex: 2001,
-						width: 48,
-						height: 48,
-						background: "rgba(40,40,40,0.9)",
-						border: "none",
-						borderRadius: "12px",
-						display: "flex",
-						alignItems: "center",
-						justifyContent: "center",
-						boxShadow: "none",
-						cursor: "pointer"
-					}}
-				>
-					<span style={{ fontSize: 28, color: "#fff" }}>
-						☰
-					</span>
-				</button>
+			<button
+			className="hamburger-btn"
+			onClick={() => setOpen(true)}
+			aria-label="Open navigation menu"
+			style={{
+				position: "absolute",
+				top: "4.5rem",
+				left: "1.5rem",
+				zIndex: 2001,
+				width: "48px",
+				height: "48px",
+				background: "rgba(40,40,40,0.9)",
+				border: "none",
+				borderRadius: "12px",
+				display: "flex",
+				alignItems: "center",
+				justifyContent: "center",
+				boxShadow: "none",
+				cursor: "pointer"
+			}}
+			>
+			<span style={{ fontSize: "28px", color: "#fff" }}>☰</span>
+			</button>
+
 			)}
 			{open && (
-				<div
+					<div
 					className="sidenav-overlay"
 					style={{
-						position: "fixed",
-						top: 0,
-						left: 16,
-						width: 340,
-						height: "100vh",
-						background: "rgba(24,24,24,0.98)",
-						boxShadow: "2px 0 24px rgba(0,0,0,0.25)",
-						zIndex: 2000,
-						display: "flex",
-						flexDirection: "column",
-						padding: 0
+					position: "fixed",
+					top: "3rem", 
+					left: "0",
+					width: 340,
+					height: `calc(100vh - 3rem)`,
+					background: "rgba(24,24,24,0.98)",
+					boxShadow: "2px 0 24px rgba(0,0,0,0.25)",
+					zIndex: 2000,
+					display: "flex",
+					flexDirection: "column",
+					padding: 0
 					}}
-				>
+  					>
+
 					{/* X button at top right of overlay */}
 					<button
 						aria-label="Close navigation menu"

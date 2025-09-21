@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./ThemeCard.css";
+import "@tauri-apps/api/core";
 
 export default function ThemeCard({ theme, onClick }) {
   const [missing, setMissing] = useState(false);
@@ -7,7 +8,7 @@ export default function ThemeCard({ theme, onClick }) {
   useEffect(() => {
     // Only check for recently viewed themes in Tauri
     if (window.__TAURI__) {
-      import('@tauri-apps/api/core').then(({ exists }) => {
+      {
         const checkFile = async () => {
           try {
             const filePath = `/tmp/reskin/${theme.name}.reskin`;
@@ -18,7 +19,7 @@ export default function ThemeCard({ theme, onClick }) {
           }
         };
         checkFile();
-      });
+      };
     }
   }, [theme.name]);
 
