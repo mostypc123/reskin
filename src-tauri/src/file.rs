@@ -36,7 +36,7 @@ pub fn select_folder() -> Result<String, String> {
 }
 
 #[tauri::command]
-pub fn select_file(title: String, filters: Vec<serde_json::Value>) -> Result<String, String> {
+pub fn select_file(title: String) -> Result<String, String> {
     let output = Command::new("zenity")
         .arg("--file-selection")
         .arg(&format!("--title={}", title))
@@ -63,7 +63,7 @@ pub fn select_file(title: String, filters: Vec<serde_json::Value>) -> Result<Str
 }
 
 #[tauri::command]
-fn ensure_reskin_folder() -> Result<(), String> {
+fn _ensure_reskin_folder() -> Result<(), String> {
 	use std::fs;
 	use std::env::temp_dir;
 	let mut path = temp_dir();
@@ -73,7 +73,7 @@ fn ensure_reskin_folder() -> Result<(), String> {
 }
 
 #[tauri::command]
-fn theme_file_exists(theme_name: String) -> bool {
+fn _theme_file_exists(theme_name: String) -> bool {
 	use std::fs;
 	use std::env::temp_dir;
 	let mut path = temp_dir();

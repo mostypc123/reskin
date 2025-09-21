@@ -80,7 +80,7 @@ export default function AuthModal({ open, onClose, onAuth }) {
       // Auto-login after signup
       await account.createEmailPasswordSession(email, password);
       const user = await account.get();
-      // Always fetch latest user profile from backend
+      // Fetch latest user profile from backend
       const fullUser = await account.get();
       const userData = {
         id: fullUser.$id,
@@ -145,6 +145,7 @@ export default function AuthModal({ open, onClose, onAuth }) {
           cursor: "pointer" 
         }}>✖</button>
         <h2 style={{ color: "var(--color-text-dark)", marginBottom: 18 }}>{showRecovery ? "Reset password" : (mode === "login" ? "Log in" : "Sign up")}</h2>
+        <p>By creating or using a Reskin account, you agree to our Terms of Service and Privacy Policy.</p>
         {!showRecovery ? (
           <>
             <form onSubmit={mode === "login" ? handleLogin : handleSignup} style={{ display: "flex", flexDirection: "column", gap: 16 }}>

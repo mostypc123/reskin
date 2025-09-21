@@ -5,7 +5,7 @@ use std::io::Write;
 
 #[tauri::command]
 #[allow(non_snake_case)]
-pub fn create_theme_dir(path: String) -> Result<String, String> {
+pub fn _create_theme_dir(path: String) -> Result<String, String> {
     fs::create_dir_all(&path)
         .map_err(|e| format!("Failed to create directory: {}", e))?;
     Ok("Directory created successfully".to_string())
