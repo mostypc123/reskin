@@ -24,4 +24,4 @@ Reskin is a modern Linux desktop theming app for browsing, applying, and managin
 
 ## Installation
 
-Installation instructions are available in the [Reskin Documentation](https://reskinapp.github.io/guides/quick-start/prerequisites/)
+Installation instructions are available in the [Reskin Documentation](https://reskinapp.github.io/guides/quick-start/prerequisites/).
