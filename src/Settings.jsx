@@ -5,8 +5,12 @@ import "./Settings.css";
 
 export default function Settings() {
     const [installLocation, setInstallLocation] = useState(
-        localStorage.getItem("reskin_install_location") || ""
+        localStorage.getItem("reskin_install_location") || "~/.themes"
     );
+    const [autoApply, setAutoApply] = useState(
+        localStorage.getItem("reskin_auto_apply") === "true"
+    );
+
     const [appVersion, setAppVersion] = useState("Unknown");
     const [fade, setFade] = useState(false);
 
@@ -27,6 +31,10 @@ export default function Settings() {
         localStorage.setItem("reskin_install_location", installLocation);
     }, [installLocation]);
 
+    useEffect(() => {
+        localStorage.setItem("reskin_auto_apply", autoApply.toString());
+    }, [autoApply]);
+
     return (
         <div className={`settings-container${fade ? " settings-fade" : ""}`}>
             <h2>Settings</h2>
@@ -39,6 +47,15 @@ export default function Settings() {
                         type="text"
                         value={installLocation}
                         onChange={(e) => setInstallLocation(e.target.value)}
+                    />
+                </div>
+                <div className="settings-row">
+                    <label htmlFor="autoApply">Automatically apply theme after installation</label>
+                    <input
+                        id="autoApply"
+                        type="checkbox"
+                        checked={autoApply}
+                        onChange={(e) => setAutoApply(e.target.checked)}
                     />
                 </div>
             </div>

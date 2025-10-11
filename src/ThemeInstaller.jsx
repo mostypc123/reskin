@@ -137,12 +137,14 @@ const handleInstall = async () => {
   try {
     showStatus("Installing theme...", "info");
 
+    const autoApply = localStorage.getItem("reskin_auto_apply") === "true";
     let result;
 
     if (selectedFile.path) {
       // Install directly from path
       result = await invoke("install_theme", {
         themePath: selectedFile.path,
+        autoApply: autoApply,
       });
     } else if (selectedFile.file) {
       // Install from file data
@@ -152,6 +154,7 @@ const handleInstall = async () => {
       result = await invoke("install_theme_from_data", {
         fileData,
         fileName: selectedFile.name,
+        autoApply: autoApply,
       });
     }
 
