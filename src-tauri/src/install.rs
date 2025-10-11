@@ -2,9 +2,10 @@ use std::fs;
 use crate::check::{has_gtk_or_wm_components, has_icons, has_cursors, has_fonts};
 use crate::extract::{extract_theme, extract_theme_info};
 use crate::utils::{install_icons, install_cursors, install_fonts, copy_dir_recursive};
+use crate::apply::apply_theme;
 
 #[tauri::command]
-pub fn install_theme_from_data(file_data: Vec<u8>, file_name: String) -> Result<String, String> {
+pub fn install_theme_from_data(file_data: Vec<u8>, file_name: String, autoApply: bool) -> Result<String, String> {
     // Create temp directory
     let temp_dir = format!("/tmp/reskin_install_{}", 
         std::time::SystemTime::now()
@@ -32,7 +33,7 @@ pub fn install_theme_from_data(file_data: Vec<u8>, file_name: String) -> Result<
         .map_err(|e| format!("Failed to read temp file: {}", e))?)?;
     
     // Now install using the theme name
-    let result = install_theme(theme_info.name.clone())?;
+    let result = install_theme(theme_info.name.clone(), autoApply)?;
     
     // Clean up temp file
     let _ = fs::remove_dir_all(&temp_dir);
@@ -41,7 +42,7 @@ pub fn install_theme_from_data(file_data: Vec<u8>, file_name: String) -> Result<
 }
 
 #[tauri::command]
-pub fn install_theme(theme_path: String) -> Result<String, String> {
+pub fn install_theme(theme_path: String, autoApply: bool) -> Result<String, String> {
     use std::path::Path;
 
     if !Path::new(&theme_path).exists() {
@@ -95,5 +96,24 @@ pub fn install_theme(theme_path: String) -> Result<String, String> {
         installed_components.join(", ")
     };
 
-    Ok(format!("Theme '{}' installed successfully!\nComponents: {}", theme_name, components_str))
+    let mut result_message = format!(
+    "Theme '{}' installed successfully!\nComponents: {}",
+    theme_name, components_str
+    );
+
+    if autoApply {
+        match apply_theme(theme_name.clone()) {
+            Ok(apply_msg) => {
+                result_message.push_str("\n\n");
+                result_message.push_str(&apply_msg);
+            },
+            Err(e) => {
+                result_message.push_str("\n\n⚠️ Failed to auto-apply: ");
+                result_message.push_str(&e);
+            }
+        }
+    }
+
+    Ok(result_message)
+
 }
