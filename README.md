@@ -6,7 +6,8 @@ Reskin is a modern Linux desktop theming app for browsing, applying, and managin
 
 > **⚠️** Please note that Reskin currently does not support NixOS.
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/kPvkpGOAFDY?si=0JEBPX1lH0alD4RX" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+## Upcoming Features
+[![Watch the video](https://img.youtube.com/vi/kPvkpGOAFDY/maxresdefault.jpg)](https://www.youtube.com/watch?v=kPvkpGOAFDY)
 
 ## How To Use
 
