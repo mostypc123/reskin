@@ -1,4 +1,6 @@
 use std::fs;
+use std::path::PathBuf;
+use dirs::home_dir;
 
 pub fn install_icons(staging_dir: &str, theme_name: &str, home_dir: &str) -> Result<(), String> {
     let icons_dir = format!("{}/.local/share/icons", home_dir);
@@ -64,4 +66,23 @@ pub fn copy_dir_recursive(src: &str, dst: &str) -> Result<(), std::io::Error> {
     }
     
     Ok(())
+}
+
+#[tauri::command]
+pub fn apply_config_file(file_data: Vec<u8>, file_name: String, dest_path: String) -> Result<String, String> {
+    let path = if dest_path.starts_with("~") {
+        let mut home = home_dir().ok_or("Could not determine home directory")?;
+        home.push(&dest_path[2..]);
+        home
+    } else {
+        PathBuf::from(dest_path)
+    };
+
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent).map_err(|e| format!("Failed to create directories: {}", e))?;
+    }
+
+    fs::write(&path, &file_data).map_err(|e| format!("Failed to write config file: {}", e))?;
+
+    Ok(format!("Configuration file {} applied to {:?}", file_name, path))
 }

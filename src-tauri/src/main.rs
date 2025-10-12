@@ -13,7 +13,8 @@
 				recent::get_recent_themes, recent::add_recent_theme,
 				install::install_theme_from_data, install::install_theme,
 				marketplace::fetch_marketplace_themes, marketplace::get_theme_info, marketplace::download_theme,
-				window::minimize, window::toggle_maximize, window::close
+				window::minimize, window::toggle_maximize, window::close,
+				utils::apply_config_file
 			])
 			.setup(|_app| {
 				// Code to run only on debug versions

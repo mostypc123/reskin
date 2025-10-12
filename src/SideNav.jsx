@@ -30,6 +30,7 @@ export default function ({ onNavigate, user, setUser }) {
 		{ label: "Marketplace", icon: "🛒", nav: "marketplace" },
 		{ label: "Theme Bundler", icon: "📦", nav: "bundler" },
 		{ label: "Theme Installer", icon: "🎨", nav: "installer" },
+		{ label: "Configuration Files", icon: "🔧", nav: "configurationfiles" },
 		{ label: "Settings", icon: "⚙️", nav: "settings" },
 	];
 

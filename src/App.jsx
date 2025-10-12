@@ -10,6 +10,7 @@ import ThemeDetails from "./ThemeDetails";
 import Settings from "./Settings";
 import UploadTheme from "./UploadTheme";
 import Marketplace from "./Marketplace";
+import ConfigurationFiles from "./ConfigurationFiles";
 
 export default function App(props) {
   const [currentView, setCurrentView] = useState('home');
@@ -97,6 +98,8 @@ export default function App(props) {
 	  return <Marketplace onThemeClick={handleThemeClick} onNavigate={setCurrentView} />;
 	case 'uploadtheme':
 	  return <UploadTheme />;
+	case 'configurationfiles':
+		return <ConfigurationFiles />;
 	case 'home':
 	default:
 	  return (
