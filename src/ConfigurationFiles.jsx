@@ -5,8 +5,13 @@ import "./ConfigurationFiles.css";
 const configMap = {
   gtk: "~/.config/gtk-3.0/settings.ini",
   kvantum: "~/.config/Kvantum/Kvantum.kvconfig",
-  kitty: "~/.config/kitty/kitty.conf",
-  waybar: "~/.config/waybar/config.jsonc"
+  kitty: "~/.config/kitty/kitty.yml",
+  waybar: "~/.config/waybar/config.jsonc",
+  bashrc: "~/.bashrc",
+  zshrc: "~/.zshrc",
+  alacritty: "~/.config/alacritty/alacritty.yml",
+  i3: "~/.config/i3/config",
+  wofi: "~/.config/wofi/style.css",
 };
 
 export default function ConfigInstaller() {
