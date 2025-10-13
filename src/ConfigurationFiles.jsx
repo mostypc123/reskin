@@ -1,7 +1,9 @@
+// Import necessary components
 import { useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import "./ConfigurationFiles.css";
 
+// Pre-defined configuration files and their locations
 const configMap = {
   gtk: "~/.config/gtk-3.0/settings.ini",
   kvantum: "~/.config/Kvantum/Kvantum.kvconfig",
@@ -19,18 +21,21 @@ const configMap = {
 };
 
 export default function ConfigInstaller() {
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null); // Define uploaded file, none by default
+  // Define config type and status message, both blank by default
   const [configType, setConfigType] = useState("");
   const [status, setStatus] = useState("");
 
   const handleFileChange = (e) => {
     if (e.target.files.length > 0) {
+      // If file is more than 0 bytes (not empty) set it as the selected file
       setSelectedFile(e.target.files[0]);
       setStatus("");
     }
   };
 
   const handleApply = async () => {
+    // Change status when there is no file uploaded and/or config type defined
     if (!selectedFile || !configType) {
       setStatus("Please select a file and a config type!");
       return;
@@ -43,6 +48,7 @@ export default function ConfigInstaller() {
       const arrayBuffer = await selectedFile.arrayBuffer();
       const fileData = Array.from(new Uint8Array(arrayBuffer));
 
+      // Invoke backend function to write the config file to the proper directory
       await invoke("apply_config_file", {
         fileData,
         fileName: selectedFile.name,
@@ -51,11 +57,13 @@ export default function ConfigInstaller() {
 
       setStatus("Configuration applied successfully! ✅");
     } catch (err) {
+      // Return error on failure
       console.error(err);
       setStatus("Failed to apply configuration ❌");
     }
   };
 
+  // Return HTML elements
   return (
     <div className={`reskin-${localStorage.getItem("reskin_theme") || "dark"}`}>
       <h1>🔧 Configuration Files</h1>
