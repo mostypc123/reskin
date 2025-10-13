@@ -1,3 +1,4 @@
+// Import necessary components
 import { useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import "./ThemeInstaller.css";
@@ -24,21 +25,25 @@ export default function ThemeInstaller({ onThemeInstalled, setCurrentView }) {
     checkTauri();
   }, []);
 
+  // Show a status message
   const showStatus = (message, type = "info") => {
     setStatus(message);
     setStatusType(type);
   };
 
+  // Handle dragging the folder over the area
   const handleDragOver = (e) => {
     e.preventDefault();
     setDragOver(true);
   };
 
+  // Handle dragging the folder outside of the area
   const handleDragLeave = (e) => {
     e.preventDefault();
     setDragOver(false);
   };
 
+  // Handle dropping the folder into the area
   const handleDrop = async (e) => {
     e.preventDefault();
     setDragOver(false);
@@ -48,11 +53,13 @@ export default function ThemeInstaller({ onThemeInstalled, setCurrentView }) {
       if (file.name.endsWith(".reskin")) {
         await handleFileSelected(file);
       } else {
+        // Show error if not a .reskin file
         showStatus("Please drop a .reskin file!", "error");
       }
     }
   };
 
+  // Handle file selection
   const handleFileSelect = async () => {
     try {
       // Open file dialog to select .reskin file
@@ -79,6 +86,7 @@ export default function ThemeInstaller({ onThemeInstalled, setCurrentView }) {
     }
   };
 
+  // Function for when a new .reskin file is uploaded
   const handleFileInputChange = async (e) => {
     const files = e.target.files;
     if (files.length > 0) {
@@ -91,6 +99,7 @@ export default function ThemeInstaller({ onThemeInstalled, setCurrentView }) {
     }
   };
 
+  // Handle selection of the .reskin file
   const handleFileSelected = async (file) => {
     setSelectedFile({ name: file.name, file: file });
     showStatus(`Selected file: ${file.name}`, "success");
@@ -105,38 +114,43 @@ export default function ThemeInstaller({ onThemeInstalled, setCurrentView }) {
       const info = await invoke("extract_theme_info", {
         fileData: fileData,
       });
-
+      // Set the extracted info as themeInfo
       setThemeInfo(info);
       showStatus("Theme info loaded successfully", "success");
     } catch (error) {
+      // On failure, return an error
       console.error("Error loading theme info:", error);
       showStatus("Could not load theme preview", "warning");
     }
   };
 
+  // Extract the theme info from a file
   const loadThemeInfo = async (filePath) => {
     try {
       const info = await invoke("extract_theme_info_from_file", {
         filePath: filePath,
       });
-
+      // Set the extracted info as themeInfo
       setThemeInfo(info);
       showStatus("Theme info loaded successfully", "success");
     } catch (error) {
+      // On failure, return an error
       console.error("Error loading theme info:", error);
       showStatus("Could not load theme preview", "warning");
     }
   };
 
+// Handle installation of the .reskin file
 const handleInstall = async () => {
   if (!selectedFile) {
+    // If not a .reskin file, show an error
     showStatus("Please select a .reskin file!", "error");
     return;
   }
 
   try {
     showStatus("Installing theme...", "info");
-
+    // If auto-apply is enabled, apply the theme automatically after it is installed
     const autoApply = localStorage.getItem("reskin_auto_apply") === "true";
     let result;
 
@@ -157,7 +171,7 @@ const handleInstall = async () => {
         autoApply: autoApply,
       });
     }
-
+    // Return success
     console.log("Install result:", result);
     showStatus("Theme installed successfully!", "success");
 
@@ -165,14 +179,16 @@ const handleInstall = async () => {
       onThemeInstalled(themeInfo);
     }
   } catch (error) {
+    // On failure, return an error
     console.error("Install error:", error);
     showStatus(`Installation failed: ${error.message || error}`, "error");
   }
 
+  // Debug message for when install button is clicked
   console.log("Install button clicked");
 };
 
-
+  // Handle theme application
   const handleApply = async () => {
     if (!themeInfo) {
       showStatus("No theme loaded to apply!", "error");
@@ -182,19 +198,21 @@ const handleInstall = async () => {
 
     try {
       showStatus("Applying theme...", "info");
-
+      // Invoke backend apply function
       const result = await invoke("apply_theme", {
         themeName: themeInfo.name,
       });
-
+      // Return success
       console.log("Apply result:", result);
       showStatus("Theme applied successfully!", "success");
     } catch (error) {
+      // On failure, return an error
       console.error("Apply error:", error);
       showStatus(`Failed to apply theme: ${error.message || error}`, "error");
     }
   };
 
+  // Define status colors for all types of status messages
   const getStatusColor = () => {
     switch (statusType) {
       case "error":
@@ -208,6 +226,7 @@ const handleInstall = async () => {
     }
   };
 
+  // Return HTML content
   return (
     <div
       id="theme-installer-root"

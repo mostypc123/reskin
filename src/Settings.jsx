@@ -1,21 +1,22 @@
+// Import necessary components
 import React, { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
-
 import "./Settings.css";
 
 export default function Settings() {
+    // Get current settings from localStorage
     const [installLocation, setInstallLocation] = useState(
         localStorage.getItem("reskin_install_location") || "~/.themes"
     );
     const [autoApply, setAutoApply] = useState(
         localStorage.getItem("reskin_auto_apply") === "true"
     );
-
     const [appVersion, setAppVersion] = useState("Unknown");
     const [fade, setFade] = useState(false);
 
     useEffect(() => {
         const getVersion = async () => {
+            // Try to get app version, fallback to Unknown on failure
             try {
                 const ver = await invoke("get_app_version");
                 setAppVersion(ver || "Unknown");
@@ -26,15 +27,16 @@ export default function Settings() {
         };
         getVersion();
     }, []);
-
+    // Set the reskin_install_location localStorage item to the installLocation variable
     useEffect(() => {
         localStorage.setItem("reskin_install_location", installLocation);
     }, [installLocation]);
 
+    // Set the reskin_auto_apply localStorage item to the autoApply variable
     useEffect(() => {
         localStorage.setItem("reskin_auto_apply", autoApply.toString());
     }, [autoApply]);
-
+    // Return HTML content
     return (
         <div className={`settings-container${fade ? " settings-fade" : ""}`}>
             <h2>Settings</h2>
