@@ -22,3 +22,7 @@ Usage instructions and tutorials are available in the [Reskin Documentation](htt
 ## Installation
 
 Installation instructions are available in the [Reskin Documentation](https://reskinapp.github.io/guides/quick-start/prerequisites/).
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=iamnotmega/reskin&type=date&legend=top-left)](https://www.star-history.com/#iamnotmega/reskin&type=date&legend=top-left)
