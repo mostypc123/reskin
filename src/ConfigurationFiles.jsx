@@ -12,6 +12,10 @@ const configMap = {
   alacritty: "~/.config/alacritty/alacritty.yml",
   i3: "~/.config/i3/config",
   wofi: "~/.config/wofi/style.css",
+  hyprland: "~/.config/hypr/hyprland.conf",
+  nvim: "~/.config/nvim/init.lua",
+  vimrc: "~/.vimrc",
+  fish: "~/.config/fish/config.fish"
 };
 
 export default function ConfigInstaller() {
