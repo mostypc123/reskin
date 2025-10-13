@@ -12,25 +12,40 @@ jobs:
       contents: write
 
     steps:
-      - name: Checkout code
+      - name: 🧾 Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
+      - name: ⚙️ Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 20
 
-      - name: Install Node modules
+      - name: 📦 Cache Node modules
+        uses: actions/cache@v3
+        with:
+          path: src-tauri/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('src-tauri/package-lock.json') }}
+
+      - name: 🦀 Cache Cargo
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            src-tauri/target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: 📥 Install Node modules
         run: |
           cd src-tauri
           npm install
 
-      - name: Build frontend
+      - name: 🧱 Build frontend
         run: |
           cd src-tauri
           npm run build
 
-      - name: Install system dependencies
+      - name: 🧩 Install system dependencies
         run: |
           sudo apt update
           sudo apt install -y \
@@ -48,25 +63,25 @@ jobs:
             libsoup-3.0-dev \
             libwebkit2gtk-4.1-dev
 
-      - name: Build Rust binary
+      - name: 🏗️ Build Rust binary
         run: |
           cd src-tauri
           cargo build --release
-          mkdir -p dist
-          rm -f dist/reskin
-          cp target/release/reskin ../dist/reskin
+          mkdir -p ../dist
+          rm -f ../dist/reskin-nightly
+          cp target/release/reskin ../dist/reskin-nightly
 
-      - name: Create or update nightly release
+      - name: 🗑️ Delete old nightly release
+        run: gh release delete nightly -y || true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🚀 Create new nightly release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: nightly
           name: Nightly
-          body: "The latest automated nightly build. This is an unstable release and may contain bugs."
+          body: "The latest automated nightly build. Please keep in mind that this release may be unstable and is not meant for production."
           draft: false
           prerelease: true
-
-      - name: Upload binary to nightly release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: nightly
-          files: dist/reskin
+          files: dist/reskin-nightly
