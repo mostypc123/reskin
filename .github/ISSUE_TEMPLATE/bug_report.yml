@@ -9,37 +9,33 @@ body:
     attributes:
       label: Summary
       description: A short description of the bug
-      required: true
 
   - type: textarea
     id: steps
     attributes:
       label: Steps to Reproduce
       description: Step-by-step instructions to reproduce the bug
-      required: true
 
   - type: textarea
     id: expected
     attributes:
       label: Expected Behavior
       description: What you expected to happen
-      required: true
 
   - type: textarea
     id: actual
     attributes:
       label: Actual Behavior
       description: What actually happened
-      required: true
 
-  - type: checkboxes
-    id: occursOnNightly
+  - type: dropdown
+    id: nightly
     attributes:
-      label: occursOnNightly
-      description: Does this issue occur in the current nightly build?
+      label: Does this occur on the nightly build?
+      description: Select yes if this happens on the nightly build
       options:
-        - label: Yes
-          value: yes
+        - Yes
+        - No
 
   - type: textarea
     id: context
