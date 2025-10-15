@@ -34,7 +34,7 @@ body:
       label: Does this occur on the nightly build?
       description: Select yes if this happens on the nightly build
       options:
-        - Yes
+        - "Yes"
         - No
 
   - type: textarea
