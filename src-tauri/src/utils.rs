@@ -86,3 +86,22 @@ pub fn apply_config_file(file_data: Vec<u8>, file_name: String, dest_path: Strin
 
     Ok(format!("Configuration file {} applied to {:?}", file_name, path))
 }
+
+#[tauri::command]
+pub fn backup_config_file(src_path: String) -> Result<String, String> {
+    // Expand ~ to /home
+    let src_path = shellexpand::tilde(&src_path).to_string();
+    let src = PathBuf::from(src_path);
+
+    // If the source file doesn't exist, throw an error
+    if !src.exists() {
+        return Err("Source file does not exist".into());
+    }
+
+    // Create a copy of the source file with the .bak extension
+    let backup_path = src.with_extension("bak");
+    fs::copy(&src, &backup_path)
+        .map_err(|e| format!("Failed to backup file: {}", e))?;
+    
+    Ok("Backup created at {}".to_string())
+}

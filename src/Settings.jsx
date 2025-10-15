@@ -11,6 +11,9 @@ export default function Settings() {
     const [autoApply, setAutoApply] = useState(
         localStorage.getItem("reskin_auto_apply") === "true"
     );
+    const [backupConfig, setBackupConfig] = useState(
+        localStorage.getItem("reskin_backup_config") === "true"
+    );
     const [appVersion, setAppVersion] = useState("Unknown");
     const [fade, setFade] = useState(false);
 
@@ -36,6 +39,10 @@ export default function Settings() {
     useEffect(() => {
         localStorage.setItem("reskin_auto_apply", autoApply.toString());
     }, [autoApply]);
+    // Set the reskin_backup_config localStorage item to the backupConfig variable
+    useEffect(() => {
+        localStorage.setItem("reskin_backup_config", backupConfig.toString());
+    }, [autoApply]);
     // Return HTML content
     return (
         <div className={`settings-container${fade ? " settings-fade" : ""}`}>
@@ -43,7 +50,7 @@ export default function Settings() {
             <div className="settings-section">
                 <h3>General</h3>
                 <div className="settings-row">
-                    <label htmlFor="installLocation">Theme Install Location:</label>
+                    <label htmlFor="installLocation" title="Set the location where themes get installed.">Theme Install Location:</label>
                     <input
                         id="installLocation"
                         type="text"
@@ -52,12 +59,21 @@ export default function Settings() {
                     />
                 </div>
                 <div className="settings-row">
-                    <label htmlFor="autoApply">Automatically apply theme after installation</label>
+                    <label htmlFor="autoApply" title="Automatically apply the theme after it is installed.">Automatically apply theme after installation</label>
                     <input
                         id="autoApply"
                         type="checkbox"
                         checked={autoApply}
                         onChange={(e) => setAutoApply(e.target.checked)}
+                    />
+                </div>
+                 <div className="settings-row">
+                    <label htmlFor="backupConfig" title="Back up the current configuration file before applying a new one.">Backup current configuration file</label>
+                    <input
+                        id="backupConfig"
+                        type="checkbox"
+                        checked={backupConfig}
+                        onChange={(e) => setBackupConfig(e.target.checked)}
                     />
                 </div>
             </div>

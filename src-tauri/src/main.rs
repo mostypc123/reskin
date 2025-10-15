@@ -14,7 +14,7 @@
 				install::install_theme_from_data, install::install_theme,
 				marketplace::fetch_marketplace_themes, marketplace::get_theme_info, marketplace::download_theme,
 				window::minimize, window::toggle_maximize, window::close,
-				utils::apply_config_file
+				utils::apply_config_file, utils::backup_config_file
 			])
 			.setup(|_app| {
 				// Code to run only on debug versions

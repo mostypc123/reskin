@@ -1,9 +1,7 @@
-// Import necessary components
 import { useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import "./ConfigurationFiles.css";
 
-// Pre-defined configuration files and their locations
 const configMap = {
   gtk: "~/.config/gtk-3.0/settings.ini",
   kvantum: "~/.config/Kvantum/Kvantum.kvconfig",
@@ -21,34 +19,58 @@ const configMap = {
 };
 
 export default function ConfigInstaller() {
-  const [selectedFile, setSelectedFile] = useState(null); // Define uploaded file, none by default
-  // Define config type and status message, both blank by default
+  const [selectedFile, setSelectedFile] = useState(null);
   const [configType, setConfigType] = useState("");
   const [status, setStatus] = useState("");
+  const [customPath, setCustomPath] = useState("");
+  const [customName, setCustomName] = useState("");
+  const [editingFile, setEditingFile] = useState(false);
+  const [editingPath, setEditingPath] = useState(false);
+
+  const getMatchingConfigType = (path, name) => {
+    for (const [type, dest] of Object.entries(configMap)) {
+      if (dest === `${path}/${name}`) return type;
+    }
+    return "custom";
+  };
 
   const handleFileChange = (e) => {
     if (e.target.files.length > 0) {
-      // If file is more than 0 bytes (not empty) set it as the selected file
       setSelectedFile(e.target.files[0]);
+      setCustomName(e.target.files[0].name);
       setStatus("");
+      setConfigType(""); // reset type
+      setCustomPath(""); // reset path
     }
   };
 
   const handleApply = async () => {
-    // Change status when there is no file uploaded and/or config type defined
-    if (!selectedFile || !configType) {
+    if (!selectedFile || (!configType && !customPath)) {
       setStatus("Please select a file and a config type!");
       return;
     }
 
-    const destPath = configMap[configType];
+    const destPath = (customPath && customName)
+      ? `${customPath}/${customName}`
+      : configMap[configType];
+
+    const backupConfig = localStorage.getItem("reskin_backup_config");
+    if (backupConfig) {
+      try {
+        await invoke("backup_config_file", { srcPath: destPath });
+        console.log("Backup created successfully");
+      } catch (err) {
+        console.warn("Backup failed:", err);
+        return;
+      }
+    }
+
     setStatus(`Applying ${selectedFile.name} → ${destPath} ...`);
 
     try {
       const arrayBuffer = await selectedFile.arrayBuffer();
       const fileData = Array.from(new Uint8Array(arrayBuffer));
 
-      // Invoke backend function to write the config file to the proper directory
       await invoke("apply_config_file", {
         fileData,
         fileName: selectedFile.name,
@@ -57,13 +79,11 @@ export default function ConfigInstaller() {
 
       setStatus("Configuration applied successfully! ✅");
     } catch (err) {
-      // Return error on failure
       console.error(err);
       setStatus("Failed to apply configuration ❌");
     }
   };
 
-  // Return HTML elements
   return (
     <div className={`reskin-${localStorage.getItem("reskin_theme") || "dark"}`}>
       <h1>🔧 Configuration Files</h1>
@@ -83,14 +103,53 @@ export default function ConfigInstaller() {
             {type}
           </option>
         ))}
+        <option value="custom">custom</option>
       </select>
 
       {/* Info Preview */}
-      {selectedFile && configType && (
+      {selectedFile && (
         <div style={{ marginTop: 16 }}>
-          <p>File: {selectedFile.name}</p>
-          <p>Type: {configType}</p>
-          <p>Destination: {configMap[configType]}</p>
+          {/* Filename */}
+          <p>
+            File:{" "}
+            {editingFile ? (
+              <input
+                value={customName}
+                onChange={(e) => setCustomName(e.target.value)}
+                onBlur={() => {
+                  setEditingFile(false);
+                  setConfigType(getMatchingConfigType(customPath, customName));
+                }}
+                autoFocus
+              />
+            ) : (
+              <>
+                {customName}{" "}
+                <button onClick={() => setEditingFile(true)}>✏️</button>
+              </>
+            )}
+          </p>
+
+          {/* Destination */}
+          <p>
+            Destination:{" "}
+            {editingPath ? (
+              <input
+                value={customPath}
+                onChange={(e) => setCustomPath(e.target.value)}
+                onBlur={() => {
+                  setEditingPath(false);
+                  setConfigType(getMatchingConfigType(customPath, customName));
+                }}
+                autoFocus
+              />
+            ) : (
+              <>
+                {customPath || (configType && configMap[configType])}{" "}
+                <button onClick={() => setEditingPath(true)}>✏️</button>
+              </>
+            )}
+          </p>
         </div>
       )}
 
