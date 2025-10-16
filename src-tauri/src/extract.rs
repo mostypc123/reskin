@@ -39,8 +39,8 @@ pub fn extract_theme_info(file_data: Vec<u8>) -> Result<ThemeManifest, String> {
 #[tauri::command]
 pub fn extract_theme_info_from_file(file_path: String) -> Result<ThemeManifest, String> {
     match fs::read(file_path) {
-        Ok(file_data) => extract_theme_info(file_data),
-        Err(e) => Err(format!("Failed to read file: {}", e))
+        Ok(file_data) => extract_theme_info(file_data), // Extract theme info from file data
+        Err(e) => Err(format!("Failed to read file: {}", e)) // Throw error on failure
     }
 }
 
@@ -48,17 +48,17 @@ pub fn extract_theme_info_from_file(file_path: String) -> Result<ThemeManifest, 
 pub fn extract_theme(bundle_path: String) -> Result<String, String> {
     use std::path::Path;
 
-    let mut file = File::open(&bundle_path)
-        .map_err(|e| format!("Failed to open bundle: {}", e))?;
+    let mut file = File::open(&bundle_path) // Attempt to open file
+        .map_err(|e| format!("Failed to open bundle: {}", e))?; // Throw error
 
-    let mut magic = [0u8; 4];
-    file.read_exact(&mut magic)
+    let mut magic = [0u8; 4]; // RSKN magic number as bytes
+    file.read_exact(&mut magic) // Read magic number from file
         .map_err(|e| format!("Failed to read magic: {}", e))?;
     if &magic != b"RSKN" {
-        return Err("Invalid bundle format".to_string());
+        return Err("Invalid bundle format".to_string()); // Return error when magic number doesn't match
     }
 
-    let mut len_bytes = [0u8; 8];
+    let mut len_bytes = [0u8; 8]; // File length as bytes
     file.read_exact(&mut len_bytes)
         .map_err(|e| format!("Failed to reach manifest length: {}", e))?;
     let manifest_len = usize::from_le_bytes(len_bytes);
@@ -70,13 +70,13 @@ pub fn extract_theme(bundle_path: String) -> Result<String, String> {
     let manifest: ThemeManifest = serde_json::from_slice(&manifest_json)
         .map_err(|e| format!("Failed to parse manifest: {}", e))?;
     
-    let home_dir = std::env::var("HOME").unwrap_or("/home/user".into());
-    let output_dir = format!("/{}/.themes/{}", home_dir, manifest.name);
+    let home_dir = std::env::var("HOME").unwrap_or("/home/user".into()); // Unwrap ~ into /home
+    let output_dir = format!("/{}/.themes/{}", home_dir, manifest.name); // Extraction output directory
 
-    fs::create_dir_all(&output_dir)
+    fs::create_dir_all(&output_dir) // Create output directory and all necessary parent directories
         .map_err(|e| format!("Failed to create output dir: {}", e))?;
     
-    fs::write(Path::new(&output_dir).join("reskin.json"), &manifest_json)
+    fs::write(Path::new(&output_dir).join("reskin.json"), &manifest_json) // Write reskin.json file into output directory
         .map_err(|e| format!("Failed to write reskin.json: {}", e))?;
 
     // Extract assets from the bundle file

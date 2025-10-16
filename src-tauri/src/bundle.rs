@@ -1,10 +1,11 @@
+// Import necessary components
 use std::path::Path;
 use crate::types::{BundleRequest};
 use std::fs::{self, File};
 use std::io::Write;
 
 #[tauri::command]
-#[allow(non_snake_case)]
+#[allow(non_snake_case)] // Allow variables to be camelCase
 pub fn _create_theme_dir(path: String) -> Result<String, String> {
     fs::create_dir_all(&path)
         .map_err(|e| format!("Failed to create directory: {}", e))?;
@@ -13,18 +14,18 @@ pub fn _create_theme_dir(path: String) -> Result<String, String> {
 
 
 #[tauri::command]
-#[allow(non_snake_case)]
+#[allow(non_snake_case)]  // Allow variables to be camelCase
 pub fn bundle_theme(request: BundleRequest) -> Result<String,String> {
-    let magic = b"RSKN";
-    let manifest_json = serde_json::to_string(&request.manifest)
+    let magic = b"RSKN"; // Define the magic number
+    let manifest_json = serde_json::to_string(&request.manifest) // Convert manifest to string
         .map_err(|e| format!("Failed to serialize manifest: {}", e))?;
-    let mut file = File::create(&request.output_path)
+    let mut file = File::create(&request.output_path) // Create empty .reskin file
         .map_err(|e| format!("Failed to create file: {}", e))?;
-    file.write_all(magic).map_err(|e| format!("Write error: {}", e))?;
+    file.write_all(magic).map_err(|e| format!("Write error: {}", e))?; // Write magic number
     let len_bytes = manifest_json.len().to_le_bytes();
-    file.write_all(&len_bytes)
+    file.write_all(&len_bytes) // Write manifest length
         .map_err(|e| format!("Failed to write manifest length: {}", e))?;
-    file.write_all(manifest_json.as_bytes())
+    file.write_all(manifest_json.as_bytes()) // Write manifest as bytes
         .map_err(|e| format!("Failed to write manifest data: {}", e))?;
 
     // Write assets
@@ -46,17 +47,17 @@ pub fn bundle_theme(request: BundleRequest) -> Result<String,String> {
             .unwrap()
             .to_string_lossy()
             .into_owned();
-        let filename_bytes = filename.as_bytes();
+        let filename_bytes = filename.as_bytes(); // Filename as bytes
         let filename_len = (filename_bytes.len() as u32).to_le_bytes();
         let asset_len = (asset_data.len() as u32).to_le_bytes();
 
-        file.write_all(&filename_len)
+        file.write_all(&filename_len) // Write filename length
             .map_err(|e| format!("Failed to write filename length: {}", e))?;
-        file.write_all(filename_bytes)
+        file.write_all(filename_bytes) // Write filename bytes
             .map_err(|e| format!("Failed to write filename: {}", e))?;
-        file.write_all(&asset_len)
+        file.write_all(&asset_len) // Write asset length
             .map_err(|e| format!("Failed to write asset length: {}", e))?;
-        file.write_all(&asset_data)
+        file.write_all(&asset_data) // Write asset data
             .map_err(|e| format!("Failed to write asset data: {}", e))?;
     }
 
@@ -64,7 +65,7 @@ pub fn bundle_theme(request: BundleRequest) -> Result<String,String> {
 }
 
 #[tauri::command]
-#[allow(non_snake_case)]
+#[allow(non_snake_case)] // Allow variables to be camelCase
     pub fn bundle_theme_from_directory(request: BundleRequest) -> Result<String, String> {
         
         let dir = match &request.theme_directory {

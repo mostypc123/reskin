@@ -1,7 +1,9 @@
+// Import necessary components
 import { useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import "./ConfigurationFiles.css";
 
+// Pre-defined config types
 const configMap = {
   gtk: "~/.config/gtk-3.0/settings.ini",
   kvantum: "~/.config/Kvantum/Kvantum.kvconfig",
@@ -19,14 +21,18 @@ const configMap = {
 };
 
 export default function ConfigInstaller() {
+  // Selected config file and type
   const [selectedFile, setSelectedFile] = useState(null);
   const [configType, setConfigType] = useState("");
+  // Status message
   const [status, setStatus] = useState("");
+  // Custom filename and location
   const [customPath, setCustomPath] = useState("");
   const [customName, setCustomName] = useState("");
   const [editingFile, setEditingFile] = useState(false);
   const [editingPath, setEditingPath] = useState(false);
 
+  // If custom destination matches a pre-defined config type, select that type instead of 'custom'
   const getMatchingConfigType = (path, name) => {
     for (const [type, dest] of Object.entries(configMap)) {
       if (dest === `${path}/${name}`) return type;
@@ -34,6 +40,7 @@ export default function ConfigInstaller() {
     return "custom";
   };
 
+  // Function to handle file change
   const handleFileChange = (e) => {
     if (e.target.files.length > 0) {
       setSelectedFile(e.target.files[0]);
@@ -44,16 +51,20 @@ export default function ConfigInstaller() {
     }
   };
 
+  // Handle config file application
   const handleApply = async () => {
+    // If there is no config file uploaded or type selected, throw an error
     if (!selectedFile || (!configType && !customPath)) {
       setStatus("Please select a file and a config type!");
       return;
     }
 
+    // Use selected config type's filename and path or use user-defined values
     const destPath = (customPath && customName)
       ? `${customPath}/${customName}`
       : configMap[configType];
 
+    // If backup config setting is enabled, invoke backend function to make a .bak file of the current config file
     const backupConfig = localStorage.getItem("reskin_backup_config");
     if (backupConfig) {
       try {
@@ -66,11 +77,11 @@ export default function ConfigInstaller() {
     }
 
     setStatus(`Applying ${selectedFile.name} → ${destPath} ...`);
-
     try {
       const arrayBuffer = await selectedFile.arrayBuffer();
       const fileData = Array.from(new Uint8Array(arrayBuffer));
-
+      
+      // Invoke backend to apply the config file
       await invoke("apply_config_file", {
         fileData,
         fileName: selectedFile.name,
@@ -79,11 +90,13 @@ export default function ConfigInstaller() {
 
       setStatus("Configuration applied successfully! ✅");
     } catch (err) {
+      // Throw an error on failure
       console.error(err);
       setStatus("Failed to apply configuration ❌");
     }
   };
 
+  // Return HTML content
   return (
     <div className={`reskin-${localStorage.getItem("reskin_theme") || "dark"}`}>
       <h1>🔧 Configuration Files</h1>

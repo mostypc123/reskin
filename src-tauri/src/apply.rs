@@ -1,3 +1,4 @@
+// Import necessary components
 use std::process::Command;
 
 #[tauri::command]
@@ -5,7 +6,7 @@ pub fn apply_theme(theme_name: String) -> Result<String, String> {
     let mut results = Vec::new();
     let mut warnings = Vec::new();
     
-    // Apply GTK theme using gsettings (like GNOME Tweaks Appearance > Applications)
+    // Apply GTK theme using gsettings
     let gtk_output = Command::new("gsettings")
         .arg("set")
         .arg("org.gnome.desktop.interface")
@@ -17,11 +18,12 @@ pub fn apply_theme(theme_name: String) -> Result<String, String> {
     if gtk_output.status.success() {
         results.push("GTK theme".to_string());
     } else {
+        // Throw error on failure
         let error = String::from_utf8_lossy(&gtk_output.stderr);
         warnings.push(format!("GTK theme failed: {}", error));
     }
     
-    // Check if user-theme extension schema exists first
+    // Check if user-theme extension schema exists
     let schema_check = Command::new("gsettings")
         .arg("list-schemas")
         .output()
@@ -30,7 +32,7 @@ pub fn apply_theme(theme_name: String) -> Result<String, String> {
     let schemas = String::from_utf8_lossy(&schema_check.stdout);
     
     if schemas.contains("org.gnome.shell.extensions.user-theme") {
-        // Apply Shell theme using gsettings (like GNOME Tweaks Appearance > Shell)
+        // Apply Shell theme using gsettings
         let shell_output = Command::new("gsettings")
             .arg("set")
             .arg("org.gnome.shell.extensions.user-theme")
