@@ -48,6 +48,7 @@ pub fn install_fonts(staging_dir: &str, theme_name: &str, home_dir: &str) -> Res
     Ok(())
 }
 
+#[allow(non_snake_case)]
 pub fn copy_dir_recursive(src: &str, dst: &str) -> Result<(), std::io::Error> {
     use std::path::Path;
     
@@ -55,13 +56,13 @@ pub fn copy_dir_recursive(src: &str, dst: &str) -> Result<(), std::io::Error> {
     
     for entry in fs::read_dir(src)? {
         let entry = entry?;
-        let src_path = entry.path();
+        let srcPath = entry.path();
         let dst_path = Path::new(dst).join(entry.file_name());
         
-        if src_path.is_dir() {
-            copy_dir_recursive(&src_path.to_string_lossy(), &dst_path.to_string_lossy())?;
+        if srcPath.is_dir() {
+            copy_dir_recursive(&srcPath.to_string_lossy(), &dst_path.to_string_lossy())?;
         } else {
-            fs::copy(&src_path, &dst_path)?;
+            fs::copy(&srcPath, &dst_path)?;
         }
     }
     
@@ -88,14 +89,15 @@ pub fn apply_config_file(file_data: Vec<u8>, file_name: String, dest_path: Strin
 }
 
 #[tauri::command]
-pub fn backup_config_file(src_path: String) -> Result<String, String> {
+#[allow(non_snake_case)]
+pub fn backup_config_file(srcPath: String) -> Result<String, String> {
     // Expand ~ to /home
-    let src_path = shellexpand::tilde(&src_path).to_string();
-    let src = PathBuf::from(src_path);
+    let srcPath = shellexpand::tilde(&srcPath).to_string();
+    let src = PathBuf::from(srcPath);
 
     // If the source file doesn't exist, throw an error
     if !src.exists() {
-        return Err("Source file does not exist".into());
+        return Ok("Skipping backup: nothing to back up".into());
     }
 
     // Create a copy of the source file with the .bak extension
