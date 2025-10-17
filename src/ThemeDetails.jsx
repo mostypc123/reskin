@@ -1,7 +1,9 @@
+// Import necessary components
 import React, { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { Client, Databases, Account, ID } from "appwrite";
 
+// Initialize Appwrite
 const client = new Client()
     .setEndpoint(import.meta.env.VITE_APPWRITE_ENDPOINT)
     .setProject("reskin");
@@ -11,19 +13,24 @@ const account = new Account(client);
 export default function ThemeDetails({ theme, onBack }) {
   const [manifest, setManifest] = useState(theme);
   const [isInstalled, setIsInstalled] = useState(false);
+  // Define Appwrite credientials
   const databaseId = "reskin";
   const collectionId = "reports";
 
   useEffect(() => {
     async function checkIfInstalled() {
+      // Get the current user's home directory
       const homeDir = `/home/${window.process?.env?.USER || 'user'}`;
       try {
-        const bundlePath = `${homeDir}/.themes/${theme.name}/${theme.name}.reskin`;
+        // Attempt to find the theme manifest
+        const bundlePath = `${homeDir}/.themes/${theme.name}/reskin.json`;
         const realManifest = await invoke('extract_theme_info_from_file', { filePath: bundlePath });
         setManifest(realManifest);
+        // Theme is installed
         setIsInstalled(true);
       } catch (err) {
         setManifest(theme);
+        // Theme is not installed
         setIsInstalled(false);
       }
     }
@@ -32,6 +39,7 @@ export default function ThemeDetails({ theme, onBack }) {
 
   if (!manifest) return <div style={{ padding: 40 }}>Loading…</div>;
 
+  // Handle applying the theme
   const handleApply = async () => {
     if (!manifest || !manifest.name) return;
     try {
@@ -41,24 +49,29 @@ export default function ThemeDetails({ theme, onBack }) {
     }
   };
 
+  // Handle installing the theme
   const handleInstall = async () => {
   console.log('Attempting to download file with ID:', manifest.file);
   if (!manifest || !manifest.file) return;
   try {
+    // Attempt to download the theme from the marketplace
     await invoke('download_theme', {
       themeFileId: manifest.file,
       themeName: manifest.name,
     });
+    // If successful, set it as installed
     setIsInstalled(true);
     alert("Theme installed successfully!");
   } catch (e) {
+    // Return error on failure
     console.error('Download Theme error:', e);
     alert("Failed to install theme.");
   }
 };
-
+  // Handle the button action of applying or installing the themes
   const handleButtonAction = isInstalled ? handleApply : handleInstall;
 
+  // Get the current user from localStorage
   const getUser = async () => {
     let user = JSON.parse(localStorage.getItem("reskin_user"));
     if (user && user.$id) return user;
@@ -71,22 +84,24 @@ export default function ThemeDetails({ theme, onBack }) {
     }
   };
 
+  // Handle report functionality
   const handleReport = async () => {
     const reason = prompt("Please explain why you are reporting this theme:");
     if (!reason) return;
 
     try {
+      // Get the current user ID, reported theme ID and the reason
       const user = await getUser();
       const reportData = {
         themeId: theme.$id || manifest.$id,
         reporterId: user?.$id || "anonymous",
         reason,
       };
-
+      // Create a new document on the database with the report data
       await databases.createDocument(databaseId, collectionId, ID.unique(), reportData);
-
       alert("Report submitted successfully!");
     } catch (err) {
+      // If unsuccessful, return an error
       console.error(err);
       alert("Failed to submit report.");
     }
@@ -94,6 +109,7 @@ export default function ThemeDetails({ theme, onBack }) {
 
   let previewSrc = manifest.preview;
 
+  // Return HTML content
   return (
     <div style={{ minHeight: "100vh", padding: "40px", fontFamily: "Inter, sans-serif" }}>
       <button onClick={onBack} style={{ background: "none", border: "none", fontSize: "2rem", cursor: "pointer", marginBottom: "24px" }}>←</button>

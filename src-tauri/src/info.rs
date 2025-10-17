@@ -8,12 +8,12 @@ pub fn get_app_version() -> Result<String, String> {
 
 #[tauri::command]
 pub fn init() -> Result<serde_json::Value, String> {
-    let de_output = Command::new("sh")
+    let de_output = Command::new("sh") // Get user's desktop environment
         .arg("-c")
         .arg("echo $XDG_CURRENT_DESKTOP")
         .output()
         .map_err(|e| format!("Failed to get desktop environment: {}", e))?;
-    Command::new("sh")
+    Command::new("sh") // Create /tmp/reskin to store bundled .reskin files
         .arg("-c")
         .arg("mkdir -p /tmp/reskin")
         .output()

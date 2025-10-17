@@ -1,14 +1,17 @@
+// Import necessary components
 import React, { useState } from "react";
 import { ID,  Client, Account } from "appwrite";
 console.log('Appwrite imports:', { Client, Account });
 import "./AuthModal.css";
 
+// Define server credientials
 const client = new Client();
 client
   .setEndpoint("https://cloud.appwrite.io/v1")
   .setProject("reskin");
 
 let account;
+// Attempt to initialize Appwrite
 try {
   account = new Account(client);
   console.log('Appwrite initialized:', { client, account });
@@ -17,17 +20,20 @@ try {
 }
 
 export default function AuthModal({ open, onClose, onAuth }) {
-  const [mode, setMode] = useState("login"); // 'login' or 'signup'
+  const [mode, setMode] = useState("login"); // Set the state of the AuthModal ("login" or "signup")
+  // Define user credientials with a setter function, leave initial state blank
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  // Define user-facing elements (loading state, recovery/password reset) which are off by default
   const [loading, setLoading] = useState(false);
   const [showRecovery, setShowRecovery] = useState(false);
+  // Define recovery email and recovery state for password reset
   const [recoveryEmail, setRecoveryEmail] = useState("");
   const [recoveryMsg, setRecoveryMsg] = useState("");
 
-  // On mount, check for active session and fetch user info
+  // On startup, check for active session and fetch user info
   React.useEffect(() => {
     (async () => {
       try {
@@ -47,7 +53,7 @@ export default function AuthModal({ open, onClose, onAuth }) {
     setLoading(true);
     setError("");
     try {
-      // Only allow login with email
+      // Allow only login with email address (Appwrite SDK limitation)
       if (!email.includes('@')) {
         throw new Error('Please enter your email address to log in.');
       }
@@ -61,9 +67,11 @@ export default function AuthModal({ open, onClose, onAuth }) {
         prefs: fullUser.prefs || {},
       };
       onAuth(userData);
+      // On successful login, store current user in localStorage
       localStorage.setItem('reskin_user', JSON.stringify(userData));
       onClose();
     } catch (err) {
+      // Return error message upon a failed login attempt
       console.error(err);
       console.error(err.stack)
       setError(err.message || "Login failed");
@@ -77,10 +85,10 @@ export default function AuthModal({ open, onClose, onAuth }) {
     setError("");
     try {
       await account.create(ID.unique(), email, password, username);
-      // Auto-login after signup
+      // Log in automatically after signing up
       await account.createEmailPasswordSession(email, password);
       const user = await account.get();
-      // Fetch latest user profile from backend
+      // Fetch latest user data from the server
       const fullUser = await account.get();
       const userData = {
         id: fullUser.$id,
@@ -89,6 +97,7 @@ export default function AuthModal({ open, onClose, onAuth }) {
         prefs: fullUser.prefs || {},
       };
       onAuth(userData);
+      // On successful signup, store current user in localStorage
       localStorage.setItem('reskin_user', JSON.stringify(userData));
       onClose();
     } catch (err) {
@@ -97,6 +106,7 @@ export default function AuthModal({ open, onClose, onAuth }) {
     setLoading(false);
   };
 
+  // Handle password reset/recovery
   const handleRecovery = async (e) => {
     e.preventDefault();
     setRecoveryMsg("");
@@ -112,6 +122,7 @@ export default function AuthModal({ open, onClose, onAuth }) {
 
   if (!open) return null;
 
+  // Return HTML elements
   return (
     <div className="auth-modal-overlay" style={{
       position: "fixed",

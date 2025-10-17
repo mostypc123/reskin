@@ -1,7 +1,9 @@
+// Import necessary components
 import "./ThemeRow.css";
 import ThemeCard from "./ThemeCard";
 
 export default function ThemeRow({ title, themes, onThemeClick }) {
+  // Return HTML content with a row of ThemeCards
   return (
     <div className="theme-row">
       <div className="theme-row-header">

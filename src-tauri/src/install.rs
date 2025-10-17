@@ -5,6 +5,7 @@ use crate::utils::{install_icons, install_cursors, install_fonts, copy_dir_recur
 use crate::apply::apply_theme;
 
 #[tauri::command]
+#[allow(non_snake_case)]
 pub fn install_theme_from_data(file_data: Vec<u8>, file_name: String, autoApply: bool) -> Result<String, String> {
     // Create temp directory
     let temp_dir = format!("/tmp/reskin_install_{}", 
@@ -42,6 +43,7 @@ pub fn install_theme_from_data(file_data: Vec<u8>, file_name: String, autoApply:
 }
 
 #[tauri::command]
+#[allow(non_snake_case)]
 pub fn install_theme(theme_path: String, autoApply: bool) -> Result<String, String> {
     use std::path::Path;
 
@@ -60,7 +62,7 @@ pub fn install_theme(theme_path: String, autoApply: bool) -> Result<String, Stri
     let mut installed_components = Vec::new();
     let staging_path = Path::new(&theme_path);
 
-    // Now use staging_path for all component checks and installs
+    // Use staging_path for all component checks and installs
     if has_gtk_or_wm_components(&staging_path) {
         let themes_dir = format!("{}/.themes", home_dir);
         let dest_dir = format!("{}/{}", themes_dir, theme_name);

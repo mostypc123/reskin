@@ -67,10 +67,12 @@ pub async fn fetch_marketplace_themes(databaseId: &str, collectionId: &str) -> R
 #[allow(non_snake_case)]
 pub async fn download_theme(themeFileId: String, themeName: String) -> Result<(), String> {
     dotenv().ok();
+    // Import Appwrite credientials from .env
     let endpoint = env::var("VITE_APPWRITE_ENDPOINT").map_err(|_| "APPWRITE_ENDPOINT not set".to_string())?;
     let projectId = env::var("VITE_APPWRITE_PROJECT_ID").map_err(|_| "APPWRITE_PROJECT_ID not set".to_string())?;
     let apiKey = env::var("VITE_APPWRITE_API_KEY").map_err(|_| "APPWRITE_API_KEY not set".to_string())?;
 
+    // Initialize Appwrite
     let client = Client::new();
     let url = format!("{}/storage/buckets/{}/files/{}/download", endpoint, "themes", themeFileId);
     let response = client
@@ -81,7 +83,6 @@ pub async fn download_theme(themeFileId: String, themeName: String) -> Result<()
         .send()
         .await
         .map_err(|e| format!("Failed to download theme: {}", e))?;
-    
     if response.status().is_success() {
         let bytes = response.bytes().await.map_err(|e| format!("Failed to read theme bytes: {}", e))?;
         

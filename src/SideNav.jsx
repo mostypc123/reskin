@@ -1,38 +1,43 @@
-
+// Import necessary components
 import { useEffect, useState } from "react";
 import AuthModal from "./AuthModal";
 import { Client, Account } from "appwrite";
 import "./SideNav.css";
 
-
+// Initialize Appwrite
 const client = new Client();
 client.setEndpoint("https://cloud.appwrite.io/v1").setProject("reskin");
 const account = new Account(client);
 
 export default function ({ onNavigate, user, setUser }) {
+  // Define side navigation component states
   const [open, setOpen] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
 
+  // Set the current user to the userObj variable
   const handleAuth = (userObj) => {
 	setUser(userObj);
   };
 
   const handleLogout = async () => {
 	try {
+	  // Attempt to delete current session when logout button is pressed, return error on failure
 	  await account.deleteSession('current');
 	} catch (err) {
 	  console.error('Logout failed:', err);
 	}
 	setUser(null);
   };
+  	// Define available navigation buttons
 	const navs = [
 		{ label: "Home", icon: "🏠", nav: "home" },
 		{ label: "Marketplace", icon: "🛒", nav: "marketplace" },
 		{ label: "Theme Bundler", icon: "📦", nav: "bundler" },
 		{ label: "Theme Installer", icon: "🎨", nav: "installer" },
+		{ label: "Configuration Files", icon: "🔧", nav: "configurationfiles" },
 		{ label: "Settings", icon: "⚙️", nav: "settings" },
 	];
-
+	// Return HTML content
 	return (
 		<>
 			{!open && (

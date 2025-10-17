@@ -1,3 +1,4 @@
+// Import necessary components
 import "./App.css";
 import ThemeRow from "./ThemeRow";
 import ThemeBundler from "./ThemeBundler";
@@ -10,6 +11,7 @@ import ThemeDetails from "./ThemeDetails";
 import Settings from "./Settings";
 import UploadTheme from "./UploadTheme";
 import Marketplace from "./Marketplace";
+import ConfigurationFiles from "./ConfigurationFiles";
 
 export default function App(props) {
   const [currentView, setCurrentView] = useState('home');
@@ -18,7 +20,7 @@ export default function App(props) {
   const [user, setUser] = useState(null);
 
 
-  // Load persistent recently installed themes on app start
+  // Get recently installed themes from localStorage
   useEffect(() => {
 	invoke("ensure_reskin_folder").catch(() => {});
 	(async () => {
@@ -30,7 +32,7 @@ export default function App(props) {
 			try {
 			  const bundlePath = `${homeDir}/.themes/${t.name}/reskin.json`;
 			  const loaded = await invoke('extract_theme_info_from_file', { filePath: bundlePath });
-			  // Only use manifest from .themes, ignore t except for installs timestamp
+			  // Use manifest from ~/.themes
 			  return { ...loaded, installs: t.installs, installed_at: t.installed_at };
 			} catch {
 			  return { name: t.name, author: t.author, description: t.description, installs: t.installs, installed_at: t.installed_at };
@@ -42,9 +44,7 @@ export default function App(props) {
 	})();
   }, []);
 
-
-  // Add a theme to recently viewed (no duplicates, newest first), always fetch manifest from installed .reskin file
-  // Save installed themes to backend for persistence
+  // Store recent themes in backend
   const saveInstalledThemes = async (themes) => {
 	try {
 	  await invoke("save_recent_themes", { themes });
@@ -97,6 +97,8 @@ export default function App(props) {
 	  return <Marketplace onThemeClick={handleThemeClick} onNavigate={setCurrentView} />;
 	case 'uploadtheme':
 	  return <UploadTheme />;
+	case 'configurationfiles':
+		return <ConfigurationFiles />;
 	case 'home':
 	default:
 	  return (
@@ -111,7 +113,7 @@ export default function App(props) {
   }
   };
 
-  // Get theme from localStorage for global class
+  // Get theme from localStorage for global appearance
   const themeClass = `reskin-${localStorage.getItem("reskin_theme") || "dark"}`;
   return (
 	<div id="main-window" className={themeClass}>

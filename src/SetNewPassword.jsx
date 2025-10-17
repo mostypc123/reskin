@@ -1,34 +1,41 @@
+// Import necessary components
 import { useState } from "react";
 import * as appwrite from "appwrite";
 
+// Initialize Appwrite
 const client = new appwrite.Client();
 client
   .setEndpoint("https://cloud.appwrite.io/v1")
   .setProject("reskin");
 
+// Define the current logged in user
 const account = new appwrite.Account(client);
 
 export default function PasswordReset() {
-  const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [msg, setMsg] = useState("");
+  const [email, setEmail] = useState(""); // Email for sending the password reset link
+  const [loading, setLoading] = useState(false); // Loading state
+  const [msg, setMsg] = useState(""); // Status message
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMsg("");
     try {
+      // Create a recovery email and send it using the Appwrite SDK
       await account.createRecovery(
         email, 
         window.location.origin + "/set-new-password"
       );
+      // Change status message to inform the user of the email being sent
       setMsg("Password reset email sent! Please check your inbox.");
     } catch (err) {
+      // Change the status message to show the error on failure
       setMsg(err.message || "Failed to send password reset email.");
     }
     setLoading(false);
   };
 
+  // Return HTML content
   return (
     <div style={{
       minHeight: '100vh',
