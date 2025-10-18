@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import "./ConfigurationFiles.css";
+import { getTranslationObject } from "./locales/index.js";
 
 // Pre-defined config types
 const configMap = {
@@ -21,18 +22,17 @@ const configMap = {
 };
 
 export default function ConfigInstaller() {
-  // Selected config file and type
+  const language = localStorage.getItem("reskin_language") || "en";
+  const t = getTranslationObject(language);
+
   const [selectedFile, setSelectedFile] = useState(null);
   const [configType, setConfigType] = useState("");
-  // Status message
   const [status, setStatus] = useState("");
-  // Custom filename and location
   const [customPath, setCustomPath] = useState("");
   const [customName, setCustomName] = useState("");
   const [editingFile, setEditingFile] = useState(false);
   const [editingPath, setEditingPath] = useState(false);
 
-  // If custom destination matches a pre-defined config type, select that type instead of 'custom'
   const getMatchingConfigType = (path, name) => {
     for (const [type, dest] of Object.entries(configMap)) {
       if (dest === `${path}/${name}`) return type;
@@ -40,31 +40,26 @@ export default function ConfigInstaller() {
     return "custom";
   };
 
-  // Function to handle file change
   const handleFileChange = (e) => {
     if (e.target.files.length > 0) {
       setSelectedFile(e.target.files[0]);
       setCustomName(e.target.files[0].name);
       setStatus("");
-      setConfigType(""); // reset type
-      setCustomPath(""); // reset path
+      setConfigType("");
+      setCustomPath("");
     }
   };
 
-  // Handle config file application
   const handleApply = async () => {
-    // If there is no config file uploaded or type selected, throw an error
     if (!selectedFile || (!configType && !customPath)) {
-      setStatus("Please select a file and a config type!");
+      setStatus(t.configurationfiles.status["status.no_file"]);
       return;
     }
 
-    // Use selected config type's filename and path or use user-defined values
     const destPath = (customPath && customName)
       ? `${customPath}/${customName}`
       : configMap[configType];
 
-    // If backup config setting is enabled, invoke backend function to make a .bak file of the current config file
     const backupConfig = localStorage.getItem("reskin_backup_config");
     if (backupConfig) {
       try {
@@ -76,55 +71,46 @@ export default function ConfigInstaller() {
       }
     }
 
-    setStatus(`Applying ${selectedFile.name} → ${destPath} ...`);
+    setStatus(t.configurationfiles.status["status.applying"].replace("{selectedFile.name}", selectedFile.name).replace("{destPath}", destPath));
     try {
       const arrayBuffer = await selectedFile.arrayBuffer();
       const fileData = Array.from(new Uint8Array(arrayBuffer));
-      
-      // Invoke backend to apply the config file
       await invoke("apply_config_file", {
         fileData,
         fileName: selectedFile.name,
         destPath
       });
-
-      setStatus("Configuration applied successfully! ✅");
+      setStatus(t.configurationfiles.status["status.success"]);
     } catch (err) {
-      // Throw an error on failure
       console.error(err);
-      setStatus("Failed to apply configuration ❌");
+      setStatus(t.configurationfiles.status["status.failure"]);
     }
   };
 
-  // Return HTML content
   return (
     <div className={`reskin-${localStorage.getItem("reskin_theme") || "dark"}`}>
-      <h1>🔧 Configuration Files</h1>
+      <h1>{t.configurationfiles.title}</h1>
 
-      {/* File Picker */}
       <input type="file" onChange={handleFileChange} />
 
-      {/* Config Type Dropdown */}
       <select
         className="configType"
         value={configType}
         onChange={(e) => setConfigType(e.target.value)}
       >
-        <option value="">Select config type</option>
+        <option value="">{t.configurationfiles.dropdown["dropdown.default"]}</option>
         {Object.keys(configMap).map((type) => (
           <option key={type} value={type}>
             {type}
           </option>
         ))}
-        <option value="custom">custom</option>
+        <option value="custom">{t.configurationfiles.dropdown["dropdown.custom"]}</option>
       </select>
 
-      {/* Info Preview */}
       {selectedFile && (
         <div style={{ marginTop: 16 }}>
-          {/* Filename */}
           <p>
-            File:{" "}
+            {t.configurationfiles.info["info.file_label"]}{" "}
             {editingFile ? (
               <input
                 value={customName}
@@ -143,9 +129,8 @@ export default function ConfigInstaller() {
             )}
           </p>
 
-          {/* Destination */}
           <p>
-            Destination:{" "}
+            {t.configurationfiles.info["info.destination_label"]}{" "}
             {editingPath ? (
               <input
                 value={customPath}
@@ -166,12 +151,10 @@ export default function ConfigInstaller() {
         </div>
       )}
 
-      {/* Apply Button */}
       <button onClick={handleApply} style={{ marginTop: 16 }}>
-        🎨 Apply Configuration
+        {t.configurationfiles.button["button.apply"]}
       </button>
 
-      {/* Status */}
       {status && <p style={{ marginTop: 12 }}>{status}</p>}
     </div>
   );

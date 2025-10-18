@@ -1,6 +1,7 @@
 // Import necessary components
 import { useState } from "react";
 import * as appwrite from "appwrite";
+import { getTranslationObject } from "./locales/index.js";
 
 // Initialize Appwrite
 const client = new appwrite.Client();
@@ -16,6 +17,10 @@ export default function PasswordReset() {
   const [loading, setLoading] = useState(false); // Loading state
   const [msg, setMsg] = useState(""); // Status message
 
+  // Translation object
+  const language = localStorage.getItem("reskin_language") || "en";
+  const t = getTranslationObject(language);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -27,10 +32,10 @@ export default function PasswordReset() {
         window.location.origin + "/set-new-password"
       );
       // Change status message to inform the user of the email being sent
-      setMsg("Password reset email sent! Please check your inbox.");
+      setMsg(t.setnewpassword.status["status.recovery_sent"]);
     } catch (err) {
       // Change the status message to show the error on failure
-      setMsg(err.message || "Failed to send password reset email.");
+      setMsg(err.message || t.setnewpassword.status["status.recovery_send_failure"]);
     }
     setLoading(false);
   };
@@ -52,11 +57,11 @@ export default function PasswordReset() {
         boxShadow: '0 4px 32px #0006',
         color: '#fff'
       }}>
-        <h2 style={{ marginBottom: 18 }}>Reset Password</h2>
+        <h2 style={{ marginBottom: 18 }}>{t.setnewpassword.title || "Reset Password"}</h2>
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <input
             type="email"
-            placeholder="Enter your email"
+            placeholder={t.setnewpassword.placeholder["placeholder.recovery_email"]}
             value={email}
             onChange={e => setEmail(e.target.value)}
             required
@@ -70,7 +75,7 @@ export default function PasswordReset() {
             fontWeight: 600,
             border: 'none',
             cursor: 'pointer'
-          }}>{loading ? "Sending..." : "Send password reset email"}</button>
+          }}>{loading ? t.setnewpassword.status["status.sending_recovery"] : t.setnewpassword.button["button.send_recovery"]}</button>
         </form>
         {msg && <div style={{ marginTop: 16, color: msg.includes('sent') ? '#2a7cff' : '#e23c3c', fontWeight: 500 }}>{msg}</div>}
       </div>

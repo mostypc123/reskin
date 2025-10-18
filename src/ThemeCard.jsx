@@ -1,48 +1,52 @@
 // Import necessary components
 import React, { useEffect, useState } from "react";
 import "./ThemeCard.css";
+import { getTranslationObject } from "./locales/index.js";
 import "@tauri-apps/api/core";
 
 export default function ThemeCard({ theme, onClick }) {
+  // Use stored language or fallback to English
+  const language = localStorage.getItem("reskin_language") || "en";
+  const t = getTranslationObject(language);
+
   const [missing, setMissing] = useState(false);
+
   useEffect(() => {
     // Only check for recently viewed themes in Tauri
     if (window.__TAURI__) {
-      {
-        const checkFile = async () => {
-          try {
-            // Check for the .reskin file in /tmp/reskin
-            const filePath = `/tmp/reskin/${theme.name}.reskin`;
-            const fileExists = await exists(filePath);
-            // If it exists, set missing to the opposite of the exists(filePath) result (should be false)
-            setMissing(!fileExists);
-          } catch {
-            // If it doesn't exist, set missing to true
-            setMissing(true);
-          }
-        };
-        checkFile();
+      const checkFile = async () => {
+        try {
+          const filePath = `/tmp/reskin/${theme.name}.reskin`;
+          const fileExists = await exists(filePath);
+          setMissing(!fileExists);
+        } catch {
+          setMissing(true);
+        }
       };
+      checkFile();
     }
   }, [theme.name]);
 
-  // Return HTML content
   return (
-    <div className="theme-card" onClick={onClick} style={{ cursor: "pointer", opacity: missing ? 0.5 : 1 }}>
+    <div
+      className="theme-card"
+      onClick={onClick}
+      style={{ cursor: "pointer", opacity: missing ? 0.5 : 1 }}
+    >
       <img
         src={theme.preview}
-        alt={theme.name || "Theme preview"}
+        alt={theme.name || t.themeCard.preview_alt}
         onError={e => { e.target.onerror = null; e.target.src = "/default-preview.png"; }}
         style={{ opacity: missing ? 0.5 : 1 }}
       />
-      <div className="theme-card-title">{theme.name || "Untitled Theme"}</div>
+      <div className="theme-card-title">{theme.name || t.themeCard.untitled}</div>
       <div className="theme-card-author">
-        by {theme.author || "Unknown"}
+        {t.themeCard.by} {theme.author || t.themeCard.unknown}
       </div>
       {missing && (
         <div style={{ color: "#ff5555", fontWeight: "bold", marginTop: 8 }}>
-          Theme file missing!<br />
-          Please reinstall the theme.
+          {t.themeCard.missing_title}<br />
+          {t.themeCard.missing_desc}
         </div>
       )}
     </div>

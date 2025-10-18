@@ -2,21 +2,29 @@
 import React, { useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import "./ThemeBundler.css";
+import { getTranslationObject } from "./locales/index.js";
 
 export default function ThemeBundler() {
+  // Translation object
+  const language = localStorage.getItem("reskin_language") || "en";
+  const t = getTranslationObject(language);
+
   // Define status variables
   const [isReady, setIsReady] = useState(false);
-  const [status, setStatus] = useState("Loading Tauri API...");
+  const [status, setStatus] = useState(t.bundler.status["status.loading_api"]);
   const [statusType, setStatusType] = useState("info");
+
   // Set default form data
   const [formData, setFormData] = useState({
     packageName: "",
     author: "",
-    description: "Created with Reskin",
+    description: t.bundler.manifest.description_default,
   });
   const [dragOver, setDragOver] = useState(false);
+
   // Define selected folder
   const [selectedFolder, setSelectedFolder] = useState(null);
+
   // Define theme manifest content
   const [themeData, setThemeData] = useState({
     name: "",
@@ -32,25 +40,21 @@ export default function ThemeBundler() {
   useEffect(() => {
     const checkTauri = () => {
       if (invoke) {
-        // If Tauri API is available, allow the bundler to be used
         setIsReady(true);
         setStatus("");
         setStatusType("info");
       } else {
-        // Wait for Tauri API
         setTimeout(checkTauri, 100);
       }
     };
     checkTauri();
   }, []);
 
-  // Show a status message with a type
   const showStatus = (message, type = "info") => {
     setStatus(message);
     setStatusType(type);
   };
 
-  // When user inputs data, apply it to the manifest data
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setThemeData((prev) => ({ ...prev, [name]: value }));
@@ -59,7 +63,6 @@ export default function ThemeBundler() {
     else if (name === "description") setFormData((prev) => ({ ...prev, description: value }));
   };
 
-  // When a tag is created and a comma is typed, add the tag to the tags variable in the manifest
   const handleTagsChange = (e) => {
     const value = e.target.value;
     if (value.endsWith(",")) {
@@ -69,22 +72,11 @@ export default function ThemeBundler() {
     }
   };
 
-  // Remove a tag from the theme manifest
   const removeTag = (tag) => setTags(tags.filter(t => t !== tag));
 
-  // Handle dragging the folder over the area
-  const handleDragOver = (e) => {
-    e.preventDefault();
-    setDragOver(true);
-  };
+  const handleDragOver = (e) => { e.preventDefault(); setDragOver(true); };
+  const handleDragLeave = (e) => { e.preventDefault(); setDragOver(false); };
 
-  // Handle dragging the folder outside of the area
-  const handleDragLeave = (e) => {
-    e.preventDefault();
-    setDragOver(false);
-  };
-
-  // Handle dropping the folder into the area
   const handleDrop = (e) => {
     e.preventDefault();
     setDragOver(false);
@@ -95,100 +87,51 @@ export default function ThemeBundler() {
         const entry = item.webkitGetAsEntry();
         if (entry && entry.isDirectory) {
           setSelectedFolder({ name: entry.name, entry: entry });
-          showStatus(`Selected folder: ${entry.name}`, "success");
+          showStatus(t.bundler.status["status.success_select"].replace("{folderName}", entry.name), "success");
         } else {
-          // Show error if not a directory
-          showStatus("Please drop a folder, not a file!", "error");
+          showStatus(t.bundler.status["status.not_directory"], "error");
         }
       }
     }
   };
 
-  // Handle folder selection
   const handleFolderSelect = async () => {
     try {
-      const folderPath = await invoke("select_folder"); // Invoke backend function to select the folder and set it as the selected folder for the bundler
+      const folderPath = await invoke("select_folder");
       const folderName = folderPath.split("/").pop();
       setSelectedFolder({ name: folderName, path: folderPath });
-      showStatus(`Selected folder: ${folderName}`, "success");
+      showStatus(t.bundler.status["status.success_select"].replace("{folderName}", folderName), "success");
     } catch (error) {
       console.error("Error selecting folder:", error);
-      showStatus(`Folder selection failed: ${error}`, "error");
+      showStatus(t.bundler.status["status.select_failed"].replace("{error}", error), "error");
       document.getElementById("folderInput").click();
     }
   };
 
-  // Function for when a new folder is uploaded
   const handleFileInputChange = (e) => {
     const files = e.target.files;
     if (files.length > 0) {
       const folderName = files[0].webkitRelativePath.split("/")[0];
       setSelectedFolder({ name: folderName, files: Array.from(files) });
-      showStatus(`Selected folder: ${folderName}`, "success");
+      showStatus(t.bundler.status["status.success_select"].replace("{folderName}", folderName), "success");
     }
   };
 
-  // Read the contents of the selected folder
-  const readDirectory = (entry) => {
-    return new Promise((resolve) => {
-      const allFiles = [];
-      const readEntries = (dirEntry) => {
-        const reader = dirEntry.createReader();
-        reader.readEntries((entries) => {
-          if (!entries.length) {
-            resolve(allFiles);
-            return;
-          }
-          const promises = entries.map((entry) => {
-            return new Promise((entryResolve) => {
-              if (entry.isFile) {
-                entry.file((file) => {
-                  allFiles.push({
-                    path: entry.fullPath,
-                    file: file,
-                  });
-                  entryResolve();
-                });
-              } else if (entry.isDirectory) {
-                readEntries(entry);
-                entryResolve();
-              } else {
-                entryResolve();
-              }
-            });
-          });
-          Promise.all(promises).then(() => readEntries(dirEntry));
-        });
-      };
-      if (entry.isDirectory) {
-        readEntries(entry);
-      } else {
-        resolve([]);
-      }
-    });
-  };
-
-  // Handle bundling the folder
   const handleBundle = async () => {
-    if (!formData.packageName || (!formData.author && !storedUser.username) || !themeData.version) { // Throw an error if name, author and version are empty
-      showStatus("Please fill in Theme Name, Author, and Version!", "error");
+    if (!formData.packageName || (!formData.author && !storedUser.username) || !themeData.version) {
+      showStatus(t.bundler.status["status.fields_empty"], "error");
       return;
     }
     if (!selectedFolder) {
-      showStatus("Please select or drop a theme folder!", "error");
+      showStatus(t.bundler.status["status.no_folder"], "error");
       return;
     }
-    
+
     try {
-      showStatus("Reading theme files...", "info");
-      let totalSize = 0;
+      showStatus(t.bundler.status["status.reading_files"], "info");
       let fileData = [];
+      if (!selectedFolder.path) fileData = selectedFolder.files || [];
 
-    if (!selectedFolder.path) {
-      fileData = selectedFolder.files ? selectedFolder.files : await readDirectory(selectedFolder.entry);
-    }
-
-      // Define the theme manifest with user input (fallback to defaults if there is none)  
       const manifest = {
         name: formData.packageName,
         author: storedUser?.username || formData.author || "User",
@@ -197,75 +140,52 @@ export default function ThemeBundler() {
         tags: tags.join(","),
         license: formData.license || "MIT",
       };
-      
+
       let homeDir = '';
-      try {
-        // Attempt to get users home directory
-        homeDir = await invoke('get_home_dir');
-      } catch {
-        // If first method fails, attempt the second method
-        homeDir = (window.__TAURI__ && window.__TAURI__.path && window.__TAURI__.path.homeDir) ? await window.__TAURI__.path.homeDir() : '/home/' + (window.process?.env?.USER || 'user');
-      }
-      
-      // Define the output directory for the .reskin file
+      try { homeDir = await invoke('get_home_dir'); } 
+      catch { homeDir = '/home/' + (window.process?.env?.USER || 'user'); }
+
       const themeDir = `/tmp/reskin`;
       const outputPath = `${themeDir}/${formData.packageName}.reskin`;
-      
-      showStatus("Bundling theme from selected folder...", "info");
-      
-      // Define request to send to the backend
+
+      showStatus(t.bundler.status["status.bundling"], "info");
+
       const request = {
-          manifest: manifest,
-          theme_directory: selectedFolder.path,
-          assets: fileData.map(f => f.path),
-          output_path: outputPath,
-      }
+        manifest,
+        theme_directory: selectedFolder.path,
+        assets: fileData.map(f => f.path),
+        output_path: outputPath,
+      };
 
       let result;
-      if (selectedFolder.path) {
-        // Send the request to be bundled
-        result = await invoke("bundle_theme", { request });
-      } else {
-        // Bundle directly from a folder, not the path
-        result = await invoke("bundle_theme_from_directory", { request });
-      }
+      if (selectedFolder.path) result = await invoke("bundle_theme", { request });
+      else result = await invoke("bundle_theme_from_directory", { request });
 
       console.log("Bundle result:", result);
-      showStatus(`Theme bundled successfully! Saved to: ${outputPath}`, "success"); // Update status to show success
+      showStatus(t.bundler.status["status.bundle_success"].replace("{outputPath}", outputPath), "success");
     } catch (error) {
       console.error("Bundle error:", error);
-      showStatus(`Bundling failed: ${error.message || error}`, "error"); // Return error on failure
+      showStatus(t.bundler.status["status.bundle_failure"].replace("{error}", error.message || error), "error");
     }
   };
 
-  // Define status colors for each type of status message
   const getStatusColor = () => {
     switch (statusType) {
-      case "error":
-        return "#ff5555";
-      case "success":
-        return "#50fa7b";
-      default:
-        return "#f8f8f2";
+      case "error": return "#ff5555";
+      case "success": return "#50fa7b";
+      default: return "#f8f8f2";
     }
   };
 
-  const handleReskinFileChange = (e) => {
-    setReskinFile(e.target.files[0] || null);
-  };
-
-  // Return HTML content
   return (
-    <div
-      id="theme-bundler-root"
-    >
-      <h1>📦 Reskin Bundler</h1>
+    <div id="theme-bundler-root">
+      <h1>📦 {t.bundler.title}</h1>
 
       <div className="themebundler-meta-row">
         <div className="themebundler-meta-col">
           <input
             name="name"
-            placeholder="Theme Name"
+            placeholder={t.bundler.manifest["manifest.name"]} 
             value={themeData.name}
             onChange={handleInputChange}
             required
@@ -273,7 +193,8 @@ export default function ThemeBundler() {
           />
           <input
             name="author"
-            placeholder="Author"
+
+            placeholder={t.bundler.manifest["manifest.author"]} 
             value={storedUser?.username || themeData.author || "User"}
             onChange={handleInputChange}
             required
@@ -282,7 +203,7 @@ export default function ThemeBundler() {
           />
           <textarea
             name="description"
-            placeholder="Description"
+            placeholder={t.bundler.manifest["manifest.description"]} 
             value={themeData.description}
             onChange={handleInputChange}
             required
@@ -290,26 +211,25 @@ export default function ThemeBundler() {
           />
           <div className="themebundler-meta-flex">
             <input
-            name="version"
-            placeholder="Version"
-            value={themeData.version}
-            onChange={e => {
-              const filtered = e.target.value.replace(/[^0-9.]/g, "");
-              setThemeData(prev => ({ ...prev, version: filtered }));
-            }}
-            required
-            className="themebundler-input themebundler-input-version"
+              name="version"
+              placeholder={t.bundler.manifest["manifest.version"]} 
+              value={themeData.version}
+              onChange={e => {
+                const filtered = e.target.value.replace(/[^0-9.]/g, "");
+                setThemeData(prev => ({ ...prev, version: filtered }));
+              }}
+              required
+              className="themebundler-input themebundler-input-version"
             />
-
             <select
               name="license"
-              value={themeData.license || "MIT"}
+              value={themeData.license || ""}
               onChange={handleInputChange}
               required
               className={`settings-dropdown`}
               style={{ color: "black" }}
             >
-              <option value="">Select License</option>
+              <option value="">{t.bundler.manifest.license_default}</option>
               <option value="MIT">MIT</option>
               <option value="GPL-3.0">GPL-3.0</option>
               <option value="Apache-2.0">Apache-2.0</option>
@@ -317,14 +237,14 @@ export default function ThemeBundler() {
             </select>
             <div className="themebundler-tags-flex">
               {tags.map(tag => (
-              <span key={tag} className="themebundler-tag-chip">
+                <span key={tag} className="themebundler-tag-chip">
                   {tag}
-                <button type="button" onClick={() => removeTag(tag)} className="themebundler-tag-remove">×</button>
+                  <button type="button" onClick={() => removeTag(tag)} className="themebundler-tag-remove">×</button>
                 </span>
               ))}
               <input
                 type="text"
-                placeholder="Add tag, then comma"
+                placeholder={t.bundler.manifest["manifest.tag_placeholder"]} 
                 onChange={handleTagsChange}
                 className="themebundler-tag-input"
               />
@@ -342,17 +262,13 @@ export default function ThemeBundler() {
       >
         {selectedFolder ? (
           <div>
-            <p>📁 Selected: {selectedFolder.name}</p>
-            <p className="themebundler-dropzone-desc">
-              Drop another folder to replace or click to browse
-            </p>
+            <p>📁 {t.bundler.dropzone.selected_title.replace("{selectedFolder.name}", selectedFolder.name)}</p>
+            <p className="themebundler-dropzone-desc">{t.bundler.dropzone.selected_desc}</p>
           </div>
         ) : (
           <div>
-            <p>📁 Drag & Drop Theme Folder Here</p>
-            <p className="themebundler-dropzone-desc">
-              Or click to browse
-            </p>
+            <p>📁 {t.bundler.dropzone.default_title}</p>
+            <p className="themebundler-dropzone-desc">{t.bundler.dropzone.default_desc}</p>
           </div>
         )}
       </div>
@@ -371,13 +287,10 @@ export default function ThemeBundler() {
         disabled={!isReady || !selectedFolder}
         className={`themebundler-bundle-btn${isReady && selectedFolder ? "" : " themebundler-bundle-btn-disabled"}`}
       >
-        📦 Bundle .reskin
+        📦 {t.bundler.button["button.bundle"]}
       </button>
 
-      <div
-        className="themebundler-status"
-        style={{ color: getStatusColor() }}
-      >
+      <div className="themebundler-status" style={{ color: getStatusColor() }}>
         {status}
       </div>
     </div>

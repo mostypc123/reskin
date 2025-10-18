@@ -4,6 +4,9 @@ import { Client, Storage, Databases, Account, Query } from "appwrite";
 import { invoke } from "@tauri-apps/api/core";
 
 export default function UploadTheme({ onNavigate }) {
+  // Use stored language or fallback to English
+  const language = localStorage.getItem("reskin_language") || "en";
+
   const [file, setFile] = useState(null); // The .reskin file to upload to the marketplace
   const [themeInfo, setThemeInfo] = useState(null); // Manifest extracted from the uploaded file
   const [status, setStatus] = useState("Pick a .reskin file"); // Status message

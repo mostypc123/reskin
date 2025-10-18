@@ -1,4 +1,5 @@
 mod info; mod file; mod extract; mod check; mod bundle; mod apply; mod recent; mod types; mod utils; mod install; mod marketplace; mod window;
+use tauri::{Manager};
 
 fn main() {
 	tauri::Builder::default()
