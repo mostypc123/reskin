@@ -2,9 +2,9 @@
 import React, { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import "./Settings.css";
+import { getTranslationObject, getLanguageOptions } from "./locales/index.js";
 
 export default function Settings() {
-    // Get current settings from localStorage
     const [installLocation, setInstallLocation] = useState(
         localStorage.getItem("reskin_install_location") || "~/.themes"
     );
@@ -14,12 +14,17 @@ export default function Settings() {
     const [backupConfig, setBackupConfig] = useState(
         localStorage.getItem("reskin_backup_config") === "true"
     );
+    const [language, setLanguage] = useState(
+        localStorage.getItem("reskin_language") || "en"
+    );
     const [appVersion, setAppVersion] = useState("Unknown");
     const [fade, setFade] = useState(false);
 
+    const t = getTranslationObject(language);
+    const languageOptions = getLanguageOptions();
+
     useEffect(() => {
         const getVersion = async () => {
-            // Try to get app version, fallback to Unknown on failure
             try {
                 const ver = await invoke("get_app_version");
                 setAppVersion(ver || "Unknown");
@@ -30,27 +35,32 @@ export default function Settings() {
         };
         getVersion();
     }, []);
-    // Set the reskin_install_location localStorage item to the installLocation variable
+
     useEffect(() => {
         localStorage.setItem("reskin_install_location", installLocation);
     }, [installLocation]);
 
-    // Set the reskin_auto_apply localStorage item to the autoApply variable
     useEffect(() => {
         localStorage.setItem("reskin_auto_apply", autoApply.toString());
     }, [autoApply]);
-    // Set the reskin_backup_config localStorage item to the backupConfig variable
+
     useEffect(() => {
         localStorage.setItem("reskin_backup_config", backupConfig.toString());
-    }, [autoApply]);
-    // Return HTML content
+    }, [backupConfig]);
+
+    useEffect(() => {
+        localStorage.setItem("reskin_language", language);
+    }, [language]);
+
     return (
         <div className={`settings-container${fade ? " settings-fade" : ""}`}>
-            <h2>Settings</h2>
+            <h2>{t.settings["title"]}</h2>
             <div className="settings-section">
-                <h3>General</h3>
+                <h3>{t.settings.section["section.general"]}</h3>
                 <div className="settings-row">
-                    <label htmlFor="installLocation" title="Set the location where themes get installed.">Theme Install Location:</label>
+                    <label htmlFor="installLocation" title={t.settings.tooltip["tooltip.install_location"]}>
+                        {t.settings.label["label.install_location"]}
+                    </label>
                     <input
                         id="installLocation"
                         type="text"
@@ -59,7 +69,9 @@ export default function Settings() {
                     />
                 </div>
                 <div className="settings-row">
-                    <label htmlFor="autoApply" title="Automatically apply the theme after it is installed.">Automatically apply theme after installation</label>
+                    <label htmlFor="autoApply" title={t.settings.tooltip["tooltip.auto_apply"]}>
+                        {t.settings.label["label.auto_apply"]}
+                    </label>
                     <input
                         id="autoApply"
                         type="checkbox"
@@ -67,8 +79,10 @@ export default function Settings() {
                         onChange={(e) => setAutoApply(e.target.checked)}
                     />
                 </div>
-                 <div className="settings-row">
-                    <label htmlFor="backupConfig" title="Back up the current configuration file before applying a new one.">Backup current configuration file</label>
+                <div className="settings-row">
+                    <label htmlFor="backupConfig" title={t.settings.tooltip["tooltip.backup_config"]}>
+                        {t.settings.label["label.backup_config"]}
+                    </label>
                     <input
                         id="backupConfig"
                         type="checkbox"
@@ -76,12 +90,28 @@ export default function Settings() {
                         onChange={(e) => setBackupConfig(e.target.checked)}
                     />
                 </div>
-            </div>
-
-            <div className="settings-section">
-                <h3>About</h3>
                 <div className="settings-row">
-                    <span>App Version:</span>
+                    <label htmlFor="language" title={t.settings.tooltip["tooltip.language"]}>
+                        {t.settings.label["label.language"]}
+                    </label>
+                    <select
+                        id="language"
+                        value={language}
+                        onChange={(e) => setLanguage(e.target.value)}
+                        style={{ color: "black" }}
+                    >
+                        {languageOptions.map((opt) => (
+                            <option key={opt.code} value={opt.code}>
+                                {opt.name}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+            </div>
+            <div className="settings-section">
+                <h3>{t.settings.section["section.about"]}</h3>
+                <div className="settings-row">
+                    <span>{t.settings.label["label.app_version"]}</span>
                     <span>{appVersion || "Unknown"}</span>
                 </div>
             </div>

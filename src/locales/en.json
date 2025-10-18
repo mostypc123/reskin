@@ -1,0 +1,265 @@
+{
+  "_META": {
+    "version": "1.5.0",
+    "translators": ["iamnotmega"],
+    "lastEdited": "18/10/2025",
+    "language": "English"
+  },
+  "authmodal": {
+    "disclaimer": "By creating or using a Reskin account, you agree to our Terms of Service and Privacy Policy.",
+    "title": {
+      "title.reset": "Reset password",
+      "title.login": "Login",
+      "title.signup": "Sign up"
+    },
+    "placeholder": {
+        "placeholder.email_login": "Email (required for login)",
+        "placeholder.email_signup": "Email (required, used for login & password reset)",
+        "placeholder.username": "Username",
+        "placeholder.password": "Password"
+    },
+    "button": {
+      "button.login": "Login",
+      "button.signup": "Sign up"
+    },
+    "status": {
+      "status.logging_in": "Logging in...",
+      "status.signing_up": "Signing up...",
+      "status.email_required": "Please enter your email address to log in.",
+      "status.login_failed": "Login failed",
+      "status.signup_failed": "Signup failed"
+    },
+    "link": {
+      "link.no_account_prefix": "Don't have an account?",
+      "link.sign_up": "Sign up",
+      "link.forgot_password": "Forgot password?",
+      "link.have_account_prefix": "Already have an account?",
+      "link.log_in": "Log in"
+    }
+
+  },
+  "configurationfiles": {
+    "title": "🔧 Configuration Files",
+    "dropdown": {
+      "dropdown.default": "Select config type",
+      "dropdown.custom": "custom"
+    },
+    "info": {
+      "info.file_label": "File:",
+      "info.destination_label": "Destination:"
+    },
+    "button": {
+      "button.apply": "🎨 Apply Configuration",
+      "button.edit": "✏️ Edit"
+    },
+    "status": {
+      "status.no_file": "Please select a file and a config type!",
+      "status.applying": "Applying {selectedFile.name} → {destPath} ...",
+      "status.success": "Configuration applied successfully! ✅",
+      "status.failure": "Failed to apply configuration ❌"
+    }
+  },
+  "marketplace": {
+    "button": {
+        "upload": "Upload a Theme"
+    },
+    "status": {
+        "loading": "Loading..."
+    },
+    "header": {
+        "title": "Marketplace"
+    }
+  },
+  "setnewpassword": {
+    "placeholder": {
+        "placeholder.recovery_email": "Enter your account email"
+    },
+    "button": {
+      "button.send_recovery": "Send password reset email",
+      "button.back_to_login": "Back to login"
+    },
+     "status": {
+      "status.sending_recovery": "Sending...",
+      "status.recovery_sent": "Password reset email sent! Check your inbox.",
+      "status.recovery_send_failure": "Failed to send recovery email."
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "section": {
+      "section.general": "General",
+      "section.about": "About"
+    },
+    "label": {
+      "label.install_location": "Theme Install Location:",
+      "label.auto_apply": "Automatically apply theme after installation",
+      "label.backup_config": "Backup current configuration file",
+      "label.language": "Language",
+      "label.app_version": "App Version:"
+    },
+    "tooltip": {
+      "tooltip.install_location": "Set the location where themes get installed.",
+      "tooltip.auto_apply": "Automatically apply the theme after it is installed.",
+      "tooltip.backup_config": "Back up the current configuration file before applying a new one.",
+      "tooltip.language": "The language of the application."
+    },
+    "option": {
+      "option.language_en": "English",
+      "option_language_ee": "Estonian"
+    }
+  },
+  "sidenav": {
+    "label": {
+      "label.home": "Home",
+      "label.marketplace": "Marketplace",
+      "label.theme_bundler": "Theme Bundler",
+      "label.theme_installer": "Theme Installer",
+      "label.configurationfiles": "Configuration Files",
+      "label.settings": "Settings",
+      "label.log_in": "Log in",
+      "label.log_out": "Log in"
+    }
+  },
+  "bundler": {
+    "title": "📦 Reskin Bundler",
+    "manifest": {
+      "manifest.name": "Theme Name",
+      "manifest.author": "Author",
+      "manifest.description": "Description",
+      "manifest.version": "Version",
+      "manifest.license_default": "Select License",
+      "manifest.tag_placeholder": "Add tag, then comma",
+      "manifest.description_default": "Created with Reskin"
+    },
+    "dropzone": {
+      "dropzone.default_title": "📁 Drag & Drop Theme Folder Here",
+      "dropzone.default_desc": "Or click to browse",
+      "dropzone.selected_title": "📁 Selected: {selectedFolder.name}",
+      "dropzone.selected_desc": "Drop another folder to replace or click to browse"
+    },
+    "button": {
+      "button.bundle": "📦 Bundle .reskin"
+    },
+    "status": {
+      "status.loading_api": "Loading Tauri API...",
+      "status.no_folder": "Please select or drop a theme folder!",
+      "status.not_directory": "Please drop a folder, not a file!",
+      "status.fields_empty": "Please fill in Theme Name, Author, and Version!",
+      "status.select_failed": "Folder selection failed: {error}",
+      "status.success_select": "Selected folder: {folderName}",
+      "status.reading_files": "Reading theme files...",
+      "status.bundling": "Bundling theme from selected folder...",
+      "status.bundle_success": "Theme bundled successfully! Saved to: {outputPath}",
+      "status.bundle_failure": "Bundling failed: {error.message}"
+    }
+  },
+  "themecard": {
+    "fallback": {
+      "fallback.name": "Untitled Theme",
+      "fallback.author": "Unknown",
+      "fallback.preview_alt": "Theme preview"
+    },
+    "label": {
+      "label.author_prefix": "by"
+    },
+    "status": {
+      "status.missing_file": "Theme file missing!",
+      "status.reinstall_theme": "Please reinstall the theme."
+    }
+  },
+  "themedetails": {
+    "status": {
+      "status.loading": "Loading…",
+      "status.install_success": "Theme installed successfully!",
+      "status.install_failure": "Failed to install theme.",
+      "status.report_submitted": "Report submitted successfully!",
+      "status.report_failure": "Failed to submit report."
+    },
+    "label": {
+      "label.author_prefix": "by"
+    },
+    "button": {
+      "button.apply": "🎨 Apply Theme",
+      "button.install": "⬇️ Install Theme",
+      "button.report": "🚨 Report"
+    },
+    "prompt": {
+      "prompt.report_reason": "Please explain why you are reporting this theme:"
+    },
+    "fallback": {
+      "fallback.preview_alt": "Theme preview",
+      "fallback.error_message": "Failed to submit report."
+    }
+  },
+  "themeinstaller": {
+    "title": "🎨 Reskin Installer",
+    "dragdrop": {
+      "default_title": "📄 Drag & Drop .reskin File Here",
+      "default_desc": "Or click to browse",
+      "selected_title": "📄 Selected: {selectedFile.name}",
+      "selected_desc": "Drop another .reskin file to replace or click to browse"
+    },
+    "file_select": {
+      "title": "Select .reskin Theme File",
+      "filter_name": "Reskin Theme Files"
+    },
+    "info_preview": {
+      "header": "📋 Theme Information",
+      "name": "Name:",
+      "author": "Author:",
+      "description": "Description:",
+      "version": "Version:",
+      "tags": "Tags:",
+      "license": "License:"
+    },
+    "button": {
+      "install": "📥 Install Theme"
+    },
+    "status": {
+      "loading_api": "Loading Tauri API...",
+      "error_not_reskin": "Please drop a .reskin file!",
+      "success_select": "Selected file: {filePath}",
+      "error_select_failed": "File selection failed, using fallback...",
+      "error_info_load": "Could not load theme preview",
+      "info_loaded": "Theme info loaded successfully",
+      "installing": "Installing theme...",
+      "install_success": "Theme installed successfully!",
+      "install_failure": "Installation failed: {error.message || error}",
+      "error_no_theme_to_apply": "No theme loaded to apply!",
+      "applying": "Applying theme...",
+      "apply_success": "Theme applied successfully!",
+      "apply_failure": "Failed to apply theme: {error.message || error}"
+    }
+  },
+  "uploadtheme": {
+  "title": "📤 Upload Theme",
+  "info_preview": {
+    "header": "Preview:",
+    "name": "Name:",
+    "author": "Author:",
+    "description": "Description:",
+    "version": "Version:",
+    "tags": "Tags:",
+    "license": "License:",
+    "fallback_author": "Unknown"
+  },
+  "button": {
+    "default": "Upload Theme",
+    "uploading": "Uploading..."
+  },
+  "status": {
+    "initial": "Pick a .reskin file",
+    "metadata_loading": "Reading theme metadata...",
+    "metadata_loaded": "Metadata loaded! Ready to upload",
+    "metadata_failed": "Failed to read theme metadata",
+    "checking_login": "Checking login...",
+    "not_logged_in": "Not logged in. Please log in first!",
+    "checking_duplicates": "Checking for duplicates...",
+    "duplicate_found": "This theme file already exists!",
+    "uploading_file": "Uploading file...",
+    "saving_metadata": "Saving metadata...",
+    "upload_success": "Upload successful!",
+    "upload_failure": "Upload failed: {error}"
+  }
+  }
+}
