@@ -1,0 +1,265 @@
+{
+"_META": {
+    "version": "1.5.0",
+    "translators": ["east.mirage"],
+    "lastEdited": "18/10/2025",
+    "language": "Türkçe"
+  },
+  "authmodal": {
+    "disclaimer": "Bir Reskin hesabı oluşturarak veya kullanarak Hizmet Şartlarımızı ve Gizlilik Politikamızı kabul etmiş olursunuz.",
+    "title": {
+      "title.reset": "Şifremi Unuttum",
+      "title.login": "Giriş Yap",
+      "title.signup": "Hesap Oluştur"
+    },
+    "placeholder": {
+        "placeholder.email_login": "E-posta (giriş yapmak için zorunlu)",
+        "placeholder.email_signup": "E-posta (giriş yapmak için ve sifre yenilemek için zorunlu)",
+        "placeholder.username": "Kullanıcı adı",
+        "placeholder.password": "Şifre"
+    },
+    "button": {
+      "button.login": "Giriş yap",
+      "button.signup": "Hesap oluştur"
+    },
+    "status": {
+      "status.logging_in": "Giriş yapılıyor...",
+      "status.signing_up": "Hesabınız oluşturuluyor...",
+      "status.email_required": "Giriş yapmak için lütfen e-posta adresinizi yazın.",
+      "status.login_failed": "Giriş başarısız oldu",
+      "status.signup_failed": "Hesap oluşturma başarısız oldu"
+    },
+    "link": {
+      "link.no_account_prefix": "Hesabınız yok mu?",
+      "link.sign_up": "Hesap oluştur",
+      "link.forgot_password": "Şifrenizi mi unuttunuz?",
+      "link.have_account_prefix": "Zaten hesabınız var mı??",
+      "link.log_in": "Giriş yap"
+    }
+
+  },
+  "configurationfiles": {
+    "title": "🔧 Yapılandırma Dosyaları",
+    "dropdown": {
+      "dropdown.default": "Yapılandırma türünü seçiniz",
+      "dropdown.custom": "Özel"
+    },
+    "info": {
+      "info.file_label": "Dosya:",
+      "info.destination_label": "Hedef:"
+    },
+    "button": {
+      "button.apply": "🎨 Yapılandırmayı uygula",
+      "button.edit": "✏️ Düzenle"
+    },
+    "status": {
+      "status.no_file": "Lütfen bir dosya ve yapılandırma tipi seçiniz!",
+      "status.applying": "{selectedFile.name} → {destPath} uygulanıyor ...",
+      "status.success": "Yapılandırma başarıyla tamamlandı! ✅",
+      "status.failure": "Yapılandırmayı uygularken hata oluştu ❌"
+    }
+  },
+  "marketplace": {
+    "button": {
+        "upload": "Bir tema yükle"
+    },
+    "status": {
+        "loading": "Yükleniyor..."
+    },
+    "header": {
+        "title": "Mağaza"
+    }
+  },
+  "setnewpassword": {
+    "placeholder": {
+        "placeholder.recovery_email": "Hesabınızın e-posta adresinizi girin"
+    },
+    "button": {
+      "button.send_recovery": "Şifre sıfırlama e-postası gönder",
+      "button.back_to_login": "Girişe dön"
+    },
+     "status": {
+      "status.sending_recovery": "Gönderiliyor...",
+      "status.recovery_sent": "Şfre sıfırlama e-postası gönderildi! Gelen kutunuzu kontrol edin.",
+      "status.recovery_send_failure": "Şifre sıfırlama e-postası gönderilemedi."
+    }
+  },
+  "settings": {
+    "title": "Ayarlar",
+    "section": {
+      "section.general": "Genel",
+      "section.about": "Hakkında"
+    },
+    "label": {
+      "label.install_location": "Tema Yükleme Konumu:",
+      "label.auto_apply": "Tema yüklendikten sonra otomatik uygula",
+      "label.backup_config": "Mevcut yapılandırma dosyasını yedekle",
+      "label.language": "Dil",
+      "label.app_version": "Uygulama Sürümü:"
+    },
+    "tooltip": {
+      "tooltip.install_location": "Temaların yükleneceği konumu belirleyin.",
+      "tooltip.auto_apply": "Tema yüklendikten sonra otomatik olarak uygula.",
+      "tooltip.backup_config": "Yeni bir tema uygulamadan önce mevcut yapılandırma dosyasını yedekle.",
+      "tooltip.language": "Uygulamanın dili."
+    },
+    "option": {
+      "option.language_en": "English",
+      "option_language_tr": "Türkçe"
+    }
+  },
+  "sidenav": {
+    "label": {
+      "label.home": "Ana Sayfa",
+      "label.marketplace": "Mağaza",
+      "label.theme_bundler": "Tema Paketleyici",
+      "label.theme_installer": "Tema Yükleyici",
+      "label.configurationfiles": "Yapılandırma Dosyaları",
+      "label.settings": "Ayarlar",
+      "label.log_in": "Giriş yap",
+      "label.log_out": "Çıkış yap"
+    }
+  },
+  "bundler": {
+    "title": "📦 Reskin Paketleyici",
+    "manifest": {
+      "manifest.name": "Tema Adı",
+      "manifest.author": "Yapımcı",
+      "manifest.description": "Açıklama",
+      "manifest.version": "Sürüm",
+      "manifest.license_default": "Lisans Seç",
+      "manifest.tag_placeholder": "Etiket ekleyin, ardından virgül",
+      "manifest.description_default": "Reskin ile oluşturuldu"
+    },
+    "dropzone": {
+      "dropzone.default_title": "📁 Tema Klasörünü Buraya Sürükleyin",
+      "dropzone.default_desc": "Veya gözatmak için tıklayın",
+      "dropzone.selected_title": "📁 Seçildi: {selectedFolder.name}",
+      "dropzone.selected_desc": "Başka bir klasörü bırakın veya gözatmak için tıklayın"
+    },
+    "button": {
+      "button.bundle": "📦 .reskin Paketle"
+    },
+    "status": {
+      "status.loading_api": "Tauri API Yükleniyor...",
+      "status.no_folder": "Lütfen bir tema klasörü seçin veya sürükleyin!",
+      "status.not_directory": "Lütfen bir dosya değil, klasör bırakın!",
+      "status.fields_empty": "Lütfen Tema Adı, Yazar ve Sürüm alanlarını doldurun!",
+      "status.select_failed": "Klasör seçimi başarısız: {error}",
+      "status.success_select": "Seçilen klasör: {folderName}",
+      "status.reading_files": "Tema dosyaları okunuyor...",
+      "status.bundling": "Seçilen klasörden tema paketleniyor...",
+      "status.bundle_success": "Tema başarıyla paketlendi! Kaydedildi: {outputPath}",
+      "status.bundle_failure": "Paketleme başarısız: {error.message}"
+    }
+  },
+  "themecard": {
+    "fallback": {
+      "fallback.name": "Adsız Tema",
+      "fallback.author": "Bilinmeyen",
+      "fallback.preview_alt": "Tema önizlemesi"
+    },
+    "label": {
+      "label.author_prefix": "tarafından"
+    },
+    "status": {
+      "status.missing_file": "Tema dosyası eksik!",
+      "status.reinstall_theme": "Lütfen temayi yendien yükleyin."
+    }
+  },
+  "themedetails": {
+    "status": {
+      "status.loading": "Yükleniyor…",
+      "status.install_success": "Tema başarıyla yüklendi!",
+      "status.install_failure": "Tema yüklenemedi.",
+      "status.report_submitted": "Rapor başarıyla gönderildi!",
+      "status.report_failure": "Rapor gönderilemedi."
+    },
+    "label": {
+      "label.author_prefix": "tarafından"
+    },
+    "button": {
+      "button.apply": "🎨 Temayı Uygula",
+      "button.install": "⬇️Temayı Yükle",
+      "button.report": "🚨 Rapor Et"
+    },
+    "prompt": {
+      "prompt.report_reason": "Lütfen bu temayı neden rapor ettiğinizi açıklayın:"
+    },
+    "fallback": {
+      "fallback.preview_alt": "Tema önizlemesi",
+      "fallback.error_message": "Rapor gönderilemedi."
+    }
+  },
+  "themeinstaller": {
+    "title": "🎨 Reskin Yükleyicisi",
+    "dragdrop": {
+      "default_title": "📄 .reskin Dosyasını Buraya Sürükleyin",
+      "default_desc": "Veya gözatmak için tıklayın",
+      "selected_title": "📄 Seçildi: {selectedFile.name}",
+      "selected_desc": "Başka bir .reskin dosyası bırakın veya gözatmak için tıklayın"
+    },
+    "file_select": {
+      "title": ".reskin Tema Dosyası Seç",
+      "filter_name": "Reskin Tema Dosyaları"
+    },
+    "info_preview": {
+      "header": "📋 Tema Bilgileri",
+      "name": "Adı:",
+      "author": "Yapımcı:",
+      "description": "Açıklama:",
+      "version": "Sürüm:",
+      "tags": "Etiketler:",
+      "license": "Lisans:"
+    },
+    "button": {
+      "install": "📥 Temayı Yükle"
+    },
+    "status": {
+      "loading_api": "Tauri API yükleniyor...",
+      "error_not_reskin": "Lütfen bir .reskin dosyası bırakın!",
+      "success_select": "Seçilen dosya: {filePath}",
+      "error_select_failed": "Dosya seçimi başarısız, yedek kullanılıyor...",
+      "error_info_load": "Tema önizlemesi yüklenemedi",
+      "info_loaded": "Tema bilgileri başarıyla yüklendi",
+      "installing": "Tema yükleniyor...",
+      "install_success": "Tema başarıyla yüklendi!",
+      "install_failure": "Yükleme başarısız: {error.message || error}",
+      "error_no_theme_to_apply": "Uygulanacak tema yok!",
+      "applying": "Tema uygulanıyor...",
+      "apply_success": "Tema başarıyla uygulandı!",
+      "apply_failure": "Tema uygulanamadı: {error.message || error}"
+    }
+  },
+  "uploadtheme": {
+  "title": "📤 Tema Yükle",
+  "info_preview": {
+    "header": "Önizleme:",
+    "name": "Adı:",
+    "author": "Yazar:",
+    "description": "Açıklama:",
+    "version": "Sürüm:",
+    "tags": "Etiketler:",
+    "license": "Lisans:",
+    "fallback_author": "Bilinmeyen"
+  },
+  "button": {
+    "default": "Temayı Yükle",
+    "uploading": "Yükleniyor..."
+  },
+  "status": {
+    "initial": "Bir .reskin dosyası seçin",
+    "metadata_loading": "Tema meta verileri okunuyor...",
+    "metadata_loaded": "Meta veriler yüklendi! Yüklemeye hazır",
+    "metadata_failed": "Tema meta verileri okunamadı",
+    "checking_login": "Giriş kontrol ediliyor...",
+    "not_logged_in": "Giriş yapılmamış. Lütfen önce giriş yapın!",
+    "checking_duplicates": "Çoğaltmalar için kontrol ediliyor...",
+    "duplicate_found": "Bu tema dosyası zaten mevcut!",
+    "uploading_file": "Dosya yükleniyor...",
+    "saving_metadata": "Meta veriler kaydediliyor...",
+    "upload_success": "Yükleme başarılı!",
+    "upload_failure": "Yükleme başarısız: {error}"
+  }
+  }
+}

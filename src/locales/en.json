@@ -104,8 +104,7 @@
       "tooltip.language": "The language of the application."
     },
     "option": {
-      "option.language_en": "English",
-      "option_language_ee": "Estonian"
+      "option.language_en": "English"
     }
   },
   "sidenav": {
